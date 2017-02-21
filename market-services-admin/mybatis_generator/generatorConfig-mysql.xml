@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+	<!-- 设置Mysql驱动路径 -->
+	<classPathEntry location="./mysql-connector-java-5.1.21-bin.jar" />
+
+	<!-- 此处指定生成针对MyBatis3的DAO -->
+	<context id="shark" targetRuntime="MyBatis3">
+		<!-- jdbc连接信息 -->
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://120.24.73.245:3306/test?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
+			userId="jst" password="=Jst1234" />
+		<javaModelGenerator targetPackage="com.app.market.dao.entity.sys.mybatis"
+			targetProject="../../market-services/src/main/java" />
+		<sqlMapGenerator targetPackage="com.app.market.dao.sqlMap.sys.mybatis"
+			targetProject="../src/main/java" />
+		<javaClientGenerator targetPackage="com.app.market.dao.mapper.sys.mybatis"
+			targetProject="../src/main/java" type="XMLMAPPER" />
+
+		<table tableName="sys_auth" domainObjectName="SysAuth"></table>
+
+	</context>
+
+</generatorConfiguration>

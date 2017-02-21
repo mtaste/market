@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.market.dao.mapper.sys.user.UserMapper">
+	<!-- 根据用户ID获取组织架构 -->
+	<select id="getUserMenu" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.parent_id AS "parentId",
+		a. NAME AS
+		"name",
+		a.auth_url AS "authUrl",
+		a.auth_icon AS "authIcon"
+		FROM
+		sys_auth a
+		where a.auth_type='1'
+	</select>
+
+</mapper>

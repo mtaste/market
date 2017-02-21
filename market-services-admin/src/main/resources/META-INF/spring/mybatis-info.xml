@@ -60,14 +60,14 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<!-- 自动扫描entity目录, 省掉Configuration.xml里的手工配置 -->
-		<property name="mapperLocations" value="classpath*:com/**/sqlMap/*.xml" />
+		<property name="mapperLocations" value="classpath*:com/**/sqlMap/**/*.xml" />
 		<property name="configLocation" value="classpath:META-INF/spring/mybatis-config.xml" />
 		<property name="plugins">
 			<array>
 				<bean class="com.github.pagehelper.PageHelper">
 					<property name="properties">
 						<value>
-							dialect=oracle
+							dialect=mysql
 						</value>
 					</property>
 				</bean>
@@ -76,7 +76,7 @@
 	</bean>
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.app.market.*.dao.*.mapper" />
+		<property name="basePackage" value="com.app.market.dao.mapper.*.*" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 

@@ -2,7 +2,7 @@ package com.app.market.support.util;
 
 import java.util.UUID;
 
-public class UUIDGenerator {
+public class GUID {
 
 	/**
 	 * 获得一个UUID

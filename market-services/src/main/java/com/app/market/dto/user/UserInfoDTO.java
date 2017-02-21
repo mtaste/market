@@ -2,7 +2,9 @@ package com.app.market.dto.user;
 
 import java.io.Serializable;
 
-public class UserInfoDTO implements Serializable {
+import com.app.market.dao.entity.sys.mybatis.SysUser;
+
+public class UserInfoDTO extends SysUser implements Serializable {
 
 	/**
 	 * 
