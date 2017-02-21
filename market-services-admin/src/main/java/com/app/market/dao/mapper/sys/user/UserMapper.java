@@ -14,4 +14,13 @@ public interface UserMapper {
 	 */
 	List<Map<String, String>> getUserMenu(@Param("userId") String userId);
 
+	/**
+	 * 获取此用户的菜单功能
+	 * 
+	 * @param userId
+	 * @param id
+	 * @return
+	 */
+	List<Map<String, String>> getUserMenuFuncs(@Param("userId") String userId, @Param("id") String id);
+
 }

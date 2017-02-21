@@ -46,4 +46,13 @@ public interface AuthService {
 	 */
 	String removeDefineData(SysAuthDTO p);
 
+	/**
+	 * 获取用户菜单权限功能
+	 * 
+	 * @param userId
+	 * @param p
+	 * @return
+	 */
+	List<Map<String, String>> getUserMenuFuncs(String userId, SysAuthDTO p);
+
 }

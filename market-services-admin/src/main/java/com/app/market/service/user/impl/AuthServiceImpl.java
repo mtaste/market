@@ -1,5 +1,13 @@
 package com.app.market.service.user.impl;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.alibaba.dubbo.common.utils.StringUtils;
+import com.alibaba.dubbo.config.annotation.Service;
 import com.app.market.dao.entity.sys.mybatis.SysAuth;
 import com.app.market.dao.entity.sys.mybatis.SysUser;
 import com.app.market.dao.entity.sys.mybatis.SysUserExample;
@@ -14,16 +22,6 @@ import com.app.market.support.util.DTOUtil;
 import com.app.market.support.util.GUID;
 import com.app.market.support.util.TokenUtil;
 import com.app.market.support.util.Version;
-import com.github.pagehelper.StringUtil;
-
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.alibaba.dubbo.common.utils.StringUtils;
-import com.alibaba.dubbo.config.annotation.Service;
 
 @Service(version = Version.NOW)
 public class AuthServiceImpl implements AuthService {
@@ -121,6 +119,11 @@ public class AuthServiceImpl implements AuthService {
 		}
 		Integer cn = this.authMapper.deleteDefineData(p.getId());
 		return cn.toString();
+	}
+
+	@Override
+	public List<Map<String, String>> getUserMenuFuncs(String userId, SysAuthDTO p) {
+		return this.userMapper.getUserMenuFuncs(userId, p.getId());
 	}
 
 }

@@ -7,34 +7,34 @@
 		SELECT
 		a.id AS "id",
 		a.parent_id AS "parentId",
-		a. NAME AS
-		"name",
+		a. NAME AS "name",
 		a.auth_url AS "authUrl",
 		a.auth_icon AS "authIcon",
-		a.auth_type
-		AS "authType",
+		a.auth_type AS "authType",
 		a.auth_value AS "authValue",
-		a.mg_type AS "mgType"
+		a.mg_type AS "mgType",
+		a.seq AS "seq"
 		FROM
 		sys_auth a
 		UNION ALL
 		SELECT
 		0,
-		-1,
+		- 1,
 		'root',
 		'',
 		'',
 		'',
 		'',
-		''
+		'',
+		'0'
+		order by seq
 	</select>
 	<!-- 删除权限定义信息 -->
 	<update id="deleteDefineData" parameterType="java.lang.String">
 		DELETE
 		FROM
 		sys_auth
-		WHERE
-		id = #{id,jdbcType=VARCHAR}
+		where FIND_IN_SET(id, getSysAuthNodeId(#{id,jdbcType=VARCHAR}))
 	</update>
 
 </mapper>

@@ -15,5 +15,22 @@
 		sys_auth a
 		where a.auth_type='1'
 	</select>
+	<!-- 获取用户菜单权限 -->
+	<select id="getUserMenuFuncs" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.`name` AS "name",
+		a.auth_icon AS "authIcon",
+		a.auth_value AS
+		"authValue",
+		a.auth_url AS "authUrl"
+		FROM
+		sys_auth a
+		WHERE
+		a.parent_id =
+		#{id,jdbcType=VARCHAR}
+		order by a.seq
+
+	</select>
 
 </mapper>
