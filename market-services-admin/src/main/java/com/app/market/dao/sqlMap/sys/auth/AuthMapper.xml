@@ -7,13 +7,16 @@
 		SELECT
 		a.id AS "id",
 		a.parent_id AS "parentId",
-		a. NAME AS "name",
+		a. NAME AS
+		"name",
 		a.auth_url AS "authUrl",
 		a.auth_icon AS "authIcon",
-		a.auth_type AS "authType",
+		a.auth_type
+		AS "authType",
 		a.auth_value AS "authValue",
 		a.mg_type AS "mgType",
-		a.seq AS "seq"
+		a.seq
+		AS "seq"
 		FROM
 		sys_auth a
 		UNION ALL

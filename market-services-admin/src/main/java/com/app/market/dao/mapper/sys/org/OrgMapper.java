@@ -3,6 +3,10 @@ package com.app.market.dao.mapper.sys.org;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.ibatis.annotations.Param;
+
+import com.app.market.dto.sys.SysOrgAuthDTO;
+
 public interface OrgMapper {
 	/**
 	 * 获取机构列表
@@ -10,5 +14,29 @@ public interface OrgMapper {
 	 * @return
 	 */
 	List<Map<String, String>> getOrgList();
+
+	/**
+	 * 获取机构权限信息
+	 * 
+	 * @param orgId
+	 * @return
+	 */
+	List<Map<String, String>> getOrgAuthList(String orgId);
+
+	/**
+	 * 删除机构
+	 * 
+	 * @param id
+	 * @return
+	 */
+	Integer deleteOrgData(@Param("orgId") String id);
+
+	/**
+	 * 保存机构权限
+	 * 
+	 * @param p
+	 * @return
+	 */
+	Integer saveOrgAuth(@Param("param") SysOrgAuthDTO p);
 
 }

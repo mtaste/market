@@ -11,4 +11,50 @@
 		FROM
 		sys_org a
 	</select>
+	<!-- 获取机构权限 -->
+	<select id="getOrgAuthList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.auth_id as "authId"
+		FROM
+		sys_org_auth a
+		WHERE
+		a.org_id
+		= #{orgId,jdbcType=VARCHAR}
+	</select>
+	<!-- 保存机构权限 -->
+	<update id="deleteOrgData" parameterType="java.lang.String">
+		DELETE
+		FROM
+		sys_org_auth
+		WHERE
+		org_id =#{orgId,jdbcType=VARCHAR};
+
+		DELETE
+		FROM
+		sys_org
+		WHERE ID=#{orgId,jdbcType=VARCHAR};
+	</update>
+	<!-- 保存机构权限 -->
+	<update id="saveOrgAuth" parameterType="java.lang.String">
+		DELETE
+		FROM
+		sys_org_auth
+		WHERE
+		org_id =#{param.orgId,jdbcType=VARCHAR};
+		INSERT INTO sys_org_auth
+		(id, org_id, auth_id) SELECT
+		UUID(),
+		#{param.orgId,jdbcType=VARCHAR},
+		a.id
+		FROM
+		sys_auth a
+		WHERE
+		CONCAT(',',#{param.authIds,jdbcType=VARCHAR},
+		',') LIKE CONCAT('%,',
+		a.id,
+		',%');
+	</update>
+
+
 </mapper>
