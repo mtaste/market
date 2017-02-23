@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
 			if (!temp.getPassWord().equals(p.getPassWord())) {
 				return "-202";
 			}
-			String token = TokenUtil.encryptToken("userName");
+			String token = TokenUtil.encryptToken(temp.getId());
 			return token;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,6 +79,15 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public List<Map<String, String>> getUserMenuFuncs(String userId, SysAuthDTO p) {
 		return this.userMapper.getUserMenuFuncs(userId, p.getId());
+	}
+
+	@Override
+	public String getUserOrgId(String userId) {
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(userId);
+		if (user != null) {
+			return user.getOrgId();
+		}
+		return "";
 	}
 
 }

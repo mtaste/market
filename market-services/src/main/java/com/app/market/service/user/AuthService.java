@@ -55,4 +55,8 @@ public interface AuthService {
 	 */
 	List<Map<String, String>> getUserMenuFuncs(String userId, SysAuthDTO p);
 
+	/**
+	 * 获取用户机构ID
+	 */
+	String getUserOrgId(String userId);
 }

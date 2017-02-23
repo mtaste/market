@@ -39,4 +39,34 @@ public interface OrgMapper {
 	 */
 	Integer saveOrgAuth(@Param("param") SysOrgAuthDTO p);
 
+	/**
+	 * 获取部门列表数据
+	 * 
+	 * @return
+	 */
+	List<Map<String, String>> getDeptList(@Param("userId") String userId);
+
+	/**
+	 * 删除部门数据
+	 * 
+	 * @param id
+	 * @return
+	 */
+	Integer deleteDeptData(@Param("id") String id);
+
+	/**
+	 * 获取部门职务列表
+	 * 
+	 * @return
+	 */
+	List<Map<String, String>> getDeptRoleList(@Param("deptId") String deptId);
+
+	/**
+	 * 删除职务
+	 * 
+	 * @param id
+	 * @return
+	 */
+	Integer deleteDeptRoleData(@Param("id") String id);
+
 }
