@@ -33,5 +33,34 @@
 		order by a.seq
 
 	</select>
+	<!-- 获取用户列表 -->
+	<select id="getUserList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.`name` AS "name",
+		a.pass_word AS
+		"passWord",
+		a.mobile AS "mobile",
+		a.user_name as "userName"
+		FROM
+		sys_user
+		a
+		where
+		a.org_id=#{param.orgId,jdbcType=VARCHAR}
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.user_name,a.name,a.mobile) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
 
+	</select>
+	<!-- 删除用户信息 -->
+	<update id="deleteUserData" parameterType="java.lang.String">
+		DELETE
+		FROM
+		sys_user
+		WHERE
+		id =#{id,jdbcType=VARCHAR}
+	</update>
 </mapper>

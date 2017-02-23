@@ -127,5 +127,73 @@
 		WHERE
 		id =#{id,jdbcType=VARCHAR}
 	</update>
-
+	<!-- 获取机构权限列表 -->
+	<select id="getOrgAllAuth" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.`name` AS "name",
+		a.parent_id AS
+		"parentId"
+		FROM
+		sys_auth a
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_org_auth b
+		WHERE
+		b.org_id=#{orgId,jdbcType=VARCHAR}
+		AND
+		FIND_IN_SET(
+		a.id,
+		getSysAuthParentList (b.auth_id)
+		)
+		);
+	</select>
+	<!-- 获取职务权限列表 -->
+	<select id="getRoleAuthList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id
+		FROM
+		sys_auth a
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_role_auth b
+		WHERE
+		b.role_id = #{roleId,jdbcType=VARCHAR}
+		AND
+		FIND_IN_SET(
+		a.id,
+		getSysAuthParentList(b.auth_id)
+		)
+		)
+	</select>
+	<!-- 保存职务权限信息 -->
+	<update id="saveRoleAuth" parameterType="java.lang.String">
+		DELETE
+		FROM
+		sys_role_auth
+		WHERE
+		role_id = #{roleId,jdbcType=VARCHAR};
+		INSERT INTO sys_role_auth
+		(id, role_id, auth_id) SELECT
+		UUID(),
+		#{roleId,jdbcType=VARCHAR},
+		a.id
+		FROM
+		sys_auth a
+		WHERE
+		CONCAT(
+		',',
+		#{authIds,jdbcType=VARCHAR},
+		','
+		) LIKE
+		CONCAT('%,', a.id, ',%');
+	</update>
 </mapper>

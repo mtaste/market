@@ -13,7 +13,7 @@ import com.app.market.dao.mapper.sys.mybatis.SysAuthMapper;
 import com.app.market.dao.mapper.sys.mybatis.SysUserMapper;
 import com.app.market.dao.mapper.sys.user.UserMapper;
 import com.app.market.dto.sys.SysAuthDTO;
-import com.app.market.dto.user.UserInfoDTO;
+import com.app.market.dto.user.SysUserDTO;
 import com.app.market.service.common.CrudService;
 import com.app.market.service.user.AuthService;
 import com.app.market.support.util.TokenUtil;
@@ -33,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
 	private CrudService crudService;
 
 	@Override
-	public String authUser(UserInfoDTO p) {
+	public String authUser(SysUserDTO p) {
 		try {
 			SysUserExample ex = new SysUserExample();
 			ex.createCriteria().andUserNameEqualTo(p.getUserName());

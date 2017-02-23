@@ -103,4 +103,21 @@ public interface OrgService {
 	 */
 	String removeDeptRoleData(SysRoleDTO p, String userId);
 
+	/**
+	 * 获取机构可以授权的功能
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	List<Map<String, String>> getOrgAllAuth(String userId);
+
+	/**
+	 * 获取职务权限
+	 * 
+	 * @param userId
+	 * @param id
+	 * @return
+	 */
+	List<Map<String, String>> getRoleAuthList(String userId, String id);
+
 }

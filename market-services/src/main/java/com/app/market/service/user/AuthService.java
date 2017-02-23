@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.app.market.dto.sys.SysAuthDTO;
-import com.app.market.dto.user.UserInfoDTO;
+import com.app.market.dto.user.SysUserDTO;
 
 public interface AuthService {
 	/**
@@ -13,7 +13,7 @@ public interface AuthService {
 	 * @param p
 	 * @return
 	 */
-	String authUser(UserInfoDTO p);
+	String authUser(SysUserDTO p);
 
 	/**
 	 * 获取用户菜单

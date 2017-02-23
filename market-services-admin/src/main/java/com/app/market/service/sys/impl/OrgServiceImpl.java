@@ -98,7 +98,10 @@ public class OrgServiceImpl implements OrgService {
 	@Override
 	public String saveDeptRoleData(SysRoleDTO p, String userId) {
 		String ret = "-101";
+		// 保存职务基础资料
 		ret = this.crudService.saveData(this.sysRoleMapper, p);
+		// 保存职务权限
+		ret = this.orgMapper.saveRoleAuth(p.getId(), p.getAuthIds()).toString();
 		return ret;
 	}
 
@@ -106,6 +109,17 @@ public class OrgServiceImpl implements OrgService {
 	public String removeDeptRoleData(SysRoleDTO p, String userId) {
 		Integer cn = this.crudService.removeData(this.orgMapper, "deleteDeptRoleData", p.getId());
 		return cn.toString();
+	}
+
+	@Override
+	public List<Map<String, String>> getOrgAllAuth(String userId) {
+		String orgId = this.authService.getUserOrgId(userId);
+		return this.orgMapper.getOrgAllAuth(orgId);
+	}
+
+	@Override
+	public List<Map<String, String>> getRoleAuthList(String userId, String id) {
+		return this.orgMapper.getRoleAuthList(userId, id);
 	}
 
 }
