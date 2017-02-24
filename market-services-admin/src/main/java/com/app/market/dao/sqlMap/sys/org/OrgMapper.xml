@@ -99,14 +99,32 @@
 	<update id="deleteDeptData" parameterType="java.lang.String">
 		DELETE
 		FROM
+		sys_role_auth
+		WHERE EXISTS (
+		SELECT
+		1
+		FROM
+		sys_role,
 		sys_dept
-		where FIND_IN_SET(id,
+		WHERE
+		sys_role_auth.role_id = sys_role.id
+		AND sys_dept.id = sys_role.dept_id
+		AND sys_dept.id =#{id,jdbcType=VARCHAR}
+		);
+
+		DELETE
+		FROM
+		sys_dept
+		where
+		FIND_IN_SET(id,
 		getSysDeptNodeId(#{id,jdbcType=VARCHAR}));
+
 		DELETE
 		FROM
 		sys_role
 		WHERE
-		dept_id =#{id,jdbcType=VARCHAR};
+		dept_id
+		=#{id,jdbcType=VARCHAR};
 	</update>
 	<!-- 获取部门职务 -->
 	<select id="getDeptRoleList" parameterType="java.lang.String"
@@ -123,9 +141,26 @@
 	<update id="deleteDeptRoleData" parameterType="java.lang.String">
 		DELETE
 		FROM
+		sys_role_auth
+		WHERE EXISTS (
+		SELECT
+		1
+		FROM
 		sys_role
 		WHERE
-		id =#{id,jdbcType=VARCHAR}
+		sys_role_auth.role_id = sys_role.id
+		and
+		sys_role.id=#{id,jdbcType=VARCHAR}
+		);
+		DELETE
+		FROM
+		sys_role
+		WHERE
+		id
+		=#{id,jdbcType=VARCHAR};
+		DELETE
+		FROM sys_user_role where
+		role_id=#{id,jdbcType=VARCHAR};
 	</update>
 	<!-- 获取机构权限列表 -->
 	<select id="getOrgAllAuth" parameterType="java.lang.String"
@@ -196,4 +231,118 @@
 		) LIKE
 		CONCAT('%,', a.id, ',%');
 	</update>
+	<!-- 获取职务可选择用户 -->
+	<select id="getRoleUserSelect" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.user_name AS "userName",
+		a.`name` AS
+		"name"
+		FROM
+		sys_user a
+		WHERE
+		NOT EXISTS (
+		SELECT
+		1
+		FROM
+		sys_user_role b
+		WHERE
+		a.id =
+		b.user_id
+		AND b.role_id =#{param.roleId,jdbcType=VARCHAR}
+		) AND
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_user b
+		WHERE
+		b.org_id =
+		a.org_id
+		AND b.id =
+		#{param.userId,jdbcType=VARCHAR}
+		)
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.user_name,a.name,a.mobile) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+	</select>
+
+	<!-- 保存职务用户信息 -->
+	<update id="saveRoleUserData" parameterType="java.lang.String">
+		INSERT INTO
+		sys_user_role (id, user_id, role_id) SELECT
+		UUID(),
+		a.id,
+		#{param.roleId,jdbcType=VARCHAR}
+		FROM
+		sys_user a
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_user b
+		WHERE
+		b.org_id = a.org_id
+		AND b.id =
+		#{param.userId,jdbcType=VARCHAR}
+		)
+		AND
+		CONCAT(',',
+		#{param.userIds,jdbcType=VARCHAR}, ',') LIKE
+		CONCAT('%,', a.id, ',%')
+		AND NOT
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_user_role c
+		WHERE
+		a.id = c.user_id
+		AND
+		c.role_id =
+		#{param.roleId,jdbcType=VARCHAR}
+		);
+	</update>
+	<!-- 删除职务 -->
+	<update id="removeRoleUserData" parameterType="java.lang.String">
+		DELETE
+		FROM
+		sys_user_role
+		WHERE
+		role_id = #{param.roleId,jdbcType=VARCHAR}
+		AND
+		CONCAT(',', #{param.userIds,jdbcType=VARCHAR}, ',') LIKE CONCAT('%,',
+		user_id, ',%')
+	</update>
+
+	<!-- 获取部门用户信息列表 -->
+	<select id="getDeptUserList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.user_name AS "userName",
+		a.`name` AS
+		"name",
+		a.mobile as "mobile",
+		getUserRole(a.id) as "roleName"
+		FROM
+		sys_user a
+		WHERE
+		EXISTS(
+		select 1 from sys_user_role b ,sys_role c
+		where
+		b.role_id=c.id
+		and b.user_id=a.id
+		and
+		c.dept_id=#{param.deptId,jdbcType=VARCHAR}
+		<if test="param.roleId!=null and param.roleId != ''">
+			and c.id=#{param.roleId,jdbcType=VARCHAR}
+		</if>
+		)
+	</select>
+
 </mapper>

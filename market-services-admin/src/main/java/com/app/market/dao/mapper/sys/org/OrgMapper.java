@@ -6,6 +6,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.app.market.dto.sys.SysOrgAuthDTO;
+import com.app.market.dto.sys.SysRoleDTO;
+import com.app.market.dto.sys.SysUserRoleDTO;
 
 public interface OrgMapper {
 	/**
@@ -94,5 +96,37 @@ public interface OrgMapper {
 	 * @return
 	 */
 	Integer saveRoleAuth(@Param("roleId") String roleId, @Param("authIds") String authIds);
+
+	/**
+	 * 获取职务可选择用户列表
+	 * 
+	 * @param roleId
+	 * @return
+	 */
+	List<Map<String, String>> getRoleUserSelect(@Param("param") SysUserRoleDTO roleId);
+
+	/**
+	 * 保存职务人呐
+	 * 
+	 * @param p
+	 * @return
+	 */
+	Integer saveRoleUserData(@Param("param") SysUserRoleDTO p);
+
+	/**
+	 * 删除用户职务
+	 * 
+	 * @param p
+	 * @return
+	 */
+	Integer removeRoleUserData(@Param("param") SysUserRoleDTO p);
+
+	/**
+	 * 获取部门用户信息
+	 * 
+	 * @param roleId
+	 * @return
+	 */
+	List<Map<String, String>> getDeptUserList(@Param("param") SysRoleDTO p);
 
 }

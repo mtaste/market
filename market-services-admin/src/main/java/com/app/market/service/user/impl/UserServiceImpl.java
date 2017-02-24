@@ -1,10 +1,13 @@
 package com.app.market.service.user.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.app.market.dao.entity.sys.mybatis.SysUser;
+import com.app.market.dao.entity.sys.mybatis.SysUserExample;
 import com.app.market.dao.mapper.sys.mybatis.SysUserMapper;
 import com.app.market.dao.mapper.sys.user.UserMapper;
 import com.app.market.dto.common.PageBean;
@@ -40,6 +43,15 @@ public class UserServiceImpl implements UserService {
 		String ret = "-101";
 		String orgId = this.authService.getUserOrgId(p.getUserId());
 		p.setOrgId(orgId);
+		// 同一个机构,用户名不能相同
+		SysUserExample ex = new SysUserExample();
+		ex.createCriteria().andUserNameEqualTo(p.getUserName()).andOrgIdEqualTo(orgId);
+		List<SysUser> list = sysUserMapper.selectByExample(ex);
+		if (list != null && list.size() > 0) {
+			if (!list.get(0).getId().equals(p.getId())) {
+				return "-203";
+			}
+		}
 		ret = this.crudService.saveData(this.sysUserMapper, p);
 		return ret;
 	}

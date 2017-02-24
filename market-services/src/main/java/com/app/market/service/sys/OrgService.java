@@ -9,6 +9,7 @@ import com.app.market.dto.sys.SysDeptDTO;
 import com.app.market.dto.sys.SysOrgAuthDTO;
 import com.app.market.dto.sys.SysOrgDTO;
 import com.app.market.dto.sys.SysRoleDTO;
+import com.app.market.dto.sys.SysUserRoleDTO;
 
 public interface OrgService {
 	/**
@@ -119,5 +120,50 @@ public interface OrgService {
 	 * @return
 	 */
 	List<Map<String, String>> getRoleAuthList(String userId, String id);
+
+	/**
+	 * 获取职务用户
+	 * 
+	 * @param page
+	 * @param p
+	 * @return
+	 */
+	PageBean<Map<String, String>> getRoleUserList(PageDTO page, SysUserRoleDTO p);
+
+	/**
+	 * 保存职务用户
+	 * 
+	 * @param p
+	 * @param userId
+	 * @return
+	 */
+	String saveRoleUserData(SysUserRoleDTO p, String userId);
+
+	/**
+	 * 删除职务用户
+	 * 
+	 * @param p
+	 * @param userId
+	 * @return
+	 */
+	String removeDeptRoleData(SysUserRoleDTO p, String userId);
+
+	/**
+	 * 获取职务可选择用户
+	 * 
+	 * @param page
+	 * @param p
+	 * @return
+	 */
+	PageBean<Map<String, String>> getRoleUserSelect(PageDTO page, SysUserRoleDTO p);
+
+	/**
+	 * 获取部门用户列表
+	 * 
+	 * @param page
+	 * @param p
+	 * @return
+	 */
+	PageBean<Map<String, String>> getDeptUserList(PageDTO page, SysRoleDTO p);
 
 }

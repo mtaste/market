@@ -16,6 +16,7 @@ import com.app.market.dto.sys.SysDeptDTO;
 import com.app.market.dto.sys.SysOrgAuthDTO;
 import com.app.market.dto.sys.SysOrgDTO;
 import com.app.market.dto.sys.SysRoleDTO;
+import com.app.market.dto.sys.SysUserRoleDTO;
 import com.app.market.service.common.CrudService;
 import com.app.market.service.sys.OrgService;
 import com.app.market.service.user.AuthService;
@@ -101,7 +102,7 @@ public class OrgServiceImpl implements OrgService {
 		// 保存职务基础资料
 		ret = this.crudService.saveData(this.sysRoleMapper, p);
 		// 保存职务权限
-		ret = this.orgMapper.saveRoleAuth(p.getId(), p.getAuthIds()).toString();
+		this.orgMapper.saveRoleAuth(p.getId(), p.getAuthIds()).toString();
 		return ret;
 	}
 
@@ -120,6 +121,43 @@ public class OrgServiceImpl implements OrgService {
 	@Override
 	public List<Map<String, String>> getRoleAuthList(String userId, String id) {
 		return this.orgMapper.getRoleAuthList(userId, id);
+	}
+
+	@Override
+	public PageBean<Map<String, String>> getRoleUserList(PageDTO page, SysUserRoleDTO p) {
+		return null;
+	}
+
+	@Override
+	public String saveRoleUserData(SysUserRoleDTO p, String userId) {
+		Integer ret = -101;
+		// 保存职务基础资料
+		p.setUserId(userId);
+		ret = this.orgMapper.saveRoleUserData(p);
+		return ret.toString();
+	}
+
+	@Override
+	public String removeDeptRoleData(SysUserRoleDTO p, String userId) {
+		Integer ret = -101;
+		// 保存职务基础资料
+		p.setUserId(userId);
+		ret = this.orgMapper.removeRoleUserData(p);
+		return ret.toString();
+	}
+
+	@Override
+	public PageBean<Map<String, String>> getRoleUserSelect(PageDTO page, SysUserRoleDTO p) {
+		PageBean<Map<String, String>> ret = null;
+		ret = this.crudService.getListPage(page, this.orgMapper, "getRoleUserSelect", p);
+		return ret;
+	}
+
+	@Override
+	public PageBean<Map<String, String>> getDeptUserList(PageDTO page, SysRoleDTO p) {
+		PageBean<Map<String, String>> ret = null;
+		ret = this.crudService.getListPage(page, this.orgMapper, "getDeptUserList", p);
+		return ret;
 	}
 
 }

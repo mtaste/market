@@ -42,7 +42,8 @@
 		a.pass_word AS
 		"passWord",
 		a.mobile AS "mobile",
-		a.user_name as "userName"
+		a.user_name as "userName",
+		getUserRole(a.id) as "roleName"
 		FROM
 		sys_user
 		a
