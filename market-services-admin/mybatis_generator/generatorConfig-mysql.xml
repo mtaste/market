@@ -17,7 +17,7 @@
 		<javaClientGenerator targetPackage="com.app.market.dao.mapper.sys.mybatis"
 			targetProject="../src/main/java" type="XMLMAPPER" />
 
-		<table tableName="sys_user_role" domainObjectName="SysUserRole"></table>
+		<table tableName="mg_org_register" domainObjectName="MgOrgRegister"></table>
 
 	</context>
 

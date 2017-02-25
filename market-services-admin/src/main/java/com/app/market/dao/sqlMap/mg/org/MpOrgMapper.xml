@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.market.dao.mapper.mg.org.MgOrgMapper">
+	<!-- 获取列表 -->
+	<select id="getRegisterOrgList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.`name` AS "name",
+		a.address AS
+		"address",
+		a.contact AS "contact",
+		a.flag AS "flag",
+		a.mobile AS "mobile"
+		FROM
+		mg_org_register a
+	</select>
+
+</mapper>

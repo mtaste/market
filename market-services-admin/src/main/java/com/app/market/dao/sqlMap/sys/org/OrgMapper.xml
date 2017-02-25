@@ -121,6 +121,20 @@
 
 		DELETE
 		FROM
+		sys_user_role
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_role b
+		WHERE
+		b.id =
+		sys_user_role.role_id and b.dept_id =#{id,jdbcType=VARCHAR}
+		);
+
+		DELETE
+		FROM
 		sys_role
 		WHERE
 		dept_id
@@ -139,6 +153,7 @@
 	</select>
 	<!-- 删除部门职务 -->
 	<update id="deleteDeptRoleData" parameterType="java.lang.String">
+		
 		DELETE
 		FROM
 		sys_role_auth
@@ -152,15 +167,19 @@
 		and
 		sys_role.id=#{id,jdbcType=VARCHAR}
 		);
+		
 		DELETE
 		FROM
 		sys_role
 		WHERE
 		id
 		=#{id,jdbcType=VARCHAR};
+		
 		DELETE
 		FROM sys_user_role where
 		role_id=#{id,jdbcType=VARCHAR};
+		
+		
 	</update>
 	<!-- 获取机构权限列表 -->
 	<select id="getOrgAllAuth" parameterType="java.lang.String"
