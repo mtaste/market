@@ -204,7 +204,8 @@
 		a.id,
 		getSysAuthParentList (b.auth_id)
 		)
-		);
+		)
+		order by a.seq
 	</select>
 	<!-- 获取职务权限列表 -->
 	<select id="getRoleAuthList" parameterType="java.lang.String"

@@ -22,16 +22,26 @@
 		SELECT
 		a.`name` AS "name",
 		a.auth_icon AS "authIcon",
-		a.auth_value AS
-		"authValue",
+		a.auth_value AS "authValue",
 		a.auth_url AS "authUrl"
 		FROM
 		sys_auth a
 		WHERE
-		a.parent_id =
-		#{id,jdbcType=VARCHAR}
-		order by a.seq
-
+		a.parent_id =#{id,jdbcType=VARCHAR}
+		AND EXISTS (
+		SELECT
+		1
+		FROM
+		sys_user_role b,
+		sys_role_auth c
+		WHERE
+		b.role_id = c.role_id
+		AND c.auth_id
+		= a.id
+		AND b.user_id = #{userId,jdbcType=VARCHAR}
+		)
+		ORDER BY
+		a.seq
 	</select>
 	<!-- 获取用户列表 -->
 	<select id="getUserList" parameterType="java.lang.String"
@@ -43,7 +53,8 @@
 		"passWord",
 		a.mobile AS "mobile",
 		a.user_name as "userName",
-		getUserRole(a.id) as "roleName"
+		getUserRole(a.id) as
+		"roleName"
 		FROM
 		sys_user
 		a

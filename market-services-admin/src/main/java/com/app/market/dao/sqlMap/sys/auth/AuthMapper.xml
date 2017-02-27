@@ -40,4 +40,30 @@
 		where FIND_IN_SET(id, getSysAuthNodeId(#{id,jdbcType=VARCHAR}))
 	</update>
 
+	<!-- 获取单据审核记录 -->
+	<select id="getBillAuthList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		b.user_name AS "userName",
+		b. NAME AS "name",
+		c.name AS
+		"status",
+		DATE_FORMAT(a.create_time,'%Y-%m-%d %T') AS "createTime",
+		a.remark AS "remark"
+		FROM
+		sys_approval_list a,
+		sys_user b,
+		sys_dic c
+		WHERE
+		1 = 1
+		and c.val=a.`status`
+		and c.dic_type='status'
+		AND a.bill_id
+		=#{param.id,jdbcType=VARCHAR}
+		AND a.create_user = b.id
+		ORDER BY
+		create_time
+		DESC
+	</select>
+
 </mapper>

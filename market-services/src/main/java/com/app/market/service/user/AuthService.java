@@ -3,6 +3,7 @@ package com.app.market.service.user;
 import java.util.List;
 import java.util.Map;
 
+import com.app.market.dto.sys.SysApprovalListDTO;
 import com.app.market.dto.sys.SysAuthDTO;
 import com.app.market.dto.user.SysUserDTO;
 
@@ -59,4 +60,12 @@ public interface AuthService {
 	 * 获取用户机构ID
 	 */
 	String getUserOrgId(String userId);
+
+	/**
+	 * 获取审核记录
+	 * 
+	 * @param p
+	 * @return
+	 */
+	List<Map<String, String>> getBillAuthList(SysApprovalListDTO p);
 }

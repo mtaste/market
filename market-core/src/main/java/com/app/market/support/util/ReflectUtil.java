@@ -4,6 +4,23 @@ import com.esotericsoftware.reflectasm.MethodAccess;
 
 public class ReflectUtil {
 	/**
+	 * 检查是否存在方法
+	 * 
+	 * @param obj
+	 * @param name
+	 * @return
+	 */
+	public static boolean checkMethod(Object obj, String name) {
+		MethodAccess access = MethodAccess.get(obj.getClass());
+		Integer index = access.getIndex(name);
+		if (index >= 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * 获取object的值
 	 * 
 	 * @param obj

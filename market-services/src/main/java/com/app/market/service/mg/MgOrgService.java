@@ -32,4 +32,28 @@ public interface MgOrgService {
 	 */
 	String removeOrgData(MgOrgRegisterDTO p);
 
+	/**
+	 * 提交
+	 * 
+	 * @param p
+	 * @return
+	 */
+	String appRegisterData(MgOrgRegisterDTO p);
+
+	/**
+	 * 审核
+	 * 
+	 * @param p
+	 * @return
+	 */
+	String authRegisterData(MgOrgRegisterDTO p);
+
+	/**
+	 * 否决
+	 * 
+	 * @param p
+	 * @return
+	 */
+	String rejectRegisterData(MgOrgRegisterDTO p);
+
 }

@@ -54,4 +54,31 @@ public interface CrudService {
 	 */
 	Integer removeData(Object mapper, String name, String id, Object... ps);
 
+	/**
+	 * 提交
+	 * 
+	 * @param mgOrgMapper
+	 * @param p
+	 * @return
+	 */
+	Integer appData(Object mapper, Object p);
+
+	/**
+	 * 审核
+	 * 
+	 * @param mapper
+	 * @param p
+	 * @return
+	 */
+	Integer authData(Object mapper, Object p);
+
+	/**
+	 * 否决
+	 * 
+	 * @param mapper
+	 * @param p
+	 * @return
+	 */
+	Integer rejectData(Object mapper, Object p);
+
 }

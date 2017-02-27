@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
+import com.app.market.dto.sys.SysApprovalListDTO;
+
 public interface AuthMapper {
 	/**
 	 * 获取权限列表
@@ -21,5 +23,13 @@ public interface AuthMapper {
 	 * @return
 	 */
 	Integer deleteDefineData(@Param("id") String id);
+
+	/**
+	 * 获取单据审核记录
+	 * 
+	 * @param p
+	 * @return
+	 */
+	List<Map<String, String>> getBillAuthList(@Param("param") SysApprovalListDTO p);
 
 }

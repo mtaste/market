@@ -7,13 +7,23 @@
 		SELECT
 		a.id AS "id",
 		a.`name` AS "name",
-		a.address AS
-		"address",
+		a.address AS "address",
 		a.contact AS "contact",
 		a.flag AS "flag",
-		a.mobile AS "mobile"
+		a.mobile AS "mobile",
+		b.`name` as "status"
 		FROM
-		mg_org_register a
+		mg_org_register a,
+		sys_dic b
+		WHERE
+		1 = 1
+		and b.dic_type='status'
+		and b.val=a.`status`
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.name,a.address,a.contact,a.mobile) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
 	</select>
 
 </mapper>

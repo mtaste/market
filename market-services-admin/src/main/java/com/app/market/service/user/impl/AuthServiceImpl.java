@@ -12,6 +12,7 @@ import com.app.market.dao.mapper.sys.auth.AuthMapper;
 import com.app.market.dao.mapper.sys.mybatis.SysAuthMapper;
 import com.app.market.dao.mapper.sys.mybatis.SysUserMapper;
 import com.app.market.dao.mapper.sys.user.UserMapper;
+import com.app.market.dto.sys.SysApprovalListDTO;
 import com.app.market.dto.sys.SysAuthDTO;
 import com.app.market.dto.user.SysUserDTO;
 import com.app.market.service.common.CrudService;
@@ -88,6 +89,11 @@ public class AuthServiceImpl implements AuthService {
 			return user.getOrgId();
 		}
 		return "";
+	}
+
+	@Override
+	public List<Map<String, String>> getBillAuthList(SysApprovalListDTO p) {
+		return this.authMapper.getBillAuthList(p);
 	}
 
 }
