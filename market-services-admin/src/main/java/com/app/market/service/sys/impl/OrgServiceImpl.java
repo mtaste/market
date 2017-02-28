@@ -38,9 +38,9 @@ public class OrgServiceImpl implements OrgService {
 	private AuthService authService;
 
 	@Override
-	public PageBean<Map<String, String>> getOrgList(PageDTO page) {
+	public PageBean<Map<String, String>> getOrgList(PageDTO page, SysOrgDTO p) {
 		PageBean<Map<String, String>> ret = null;
-		ret = this.crudService.getListPage(page, this.orgMapper, "getOrgList");
+		ret = this.crudService.getListPage(page, this.orgMapper, "getOrgList", p);
 		return ret;
 	}
 

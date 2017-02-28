@@ -13,8 +13,26 @@
 		a.auth_icon AS "authIcon"
 		FROM
 		sys_auth a
-		where a.auth_type='1'
-		order by a.seq
+		WHERE
+		a.auth_type = '1'
+		AND EXISTS (
+		SELECT
+		1
+		FROM
+		sys_role_auth b,
+		sys_user_role c
+		WHERE
+		b.role_id = c.role_id
+		AND c.user_id =
+		#{userId,jdbcType=VARCHAR}
+		AND
+		FIND_IN_SET(
+		a.id,
+		getSysAuthParentList (b.auth_id)
+		)
+		)
+		ORDER BY
+		a.seq
 	</select>
 	<!-- 获取用户菜单权限 -->
 	<select id="getUserMenuFuncs" parameterType="java.lang.String"

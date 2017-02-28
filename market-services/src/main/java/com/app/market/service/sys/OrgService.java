@@ -17,7 +17,7 @@ public interface OrgService {
 	 * 
 	 * @return
 	 */
-	PageBean<Map<String, String>> getOrgList(PageDTO page);
+	PageBean<Map<String, String>> getOrgList(PageDTO page, SysOrgDTO p);
 
 	/**
 	 * 保存数据

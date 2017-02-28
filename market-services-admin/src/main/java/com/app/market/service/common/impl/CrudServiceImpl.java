@@ -10,8 +10,10 @@ import com.alibaba.dubbo.common.utils.StringUtils;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.app.market.dao.entity.sys.mybatis.SysApprovalConfig;
 import com.app.market.dao.entity.sys.mybatis.SysApprovalList;
+import com.app.market.dao.entity.sys.mybatis.SysTimeList;
 import com.app.market.dao.mapper.sys.mybatis.SysApprovalConfigMapper;
 import com.app.market.dao.mapper.sys.mybatis.SysApprovalListMapper;
+import com.app.market.dao.mapper.sys.mybatis.SysTimeListMapper;
 import com.app.market.dto.common.PageBean;
 import com.app.market.dto.common.PageDTO;
 import com.app.market.service.common.CrudService;
@@ -27,6 +29,8 @@ public class CrudServiceImpl implements CrudService {
 	private SysApprovalListMapper sysApprovalListMapper;
 	@Autowired
 	private SysApprovalConfigMapper sysApprovalConfigMapper;
+	@Autowired
+	private SysTimeListMapper sysTimeListMapper;
 
 	@Override
 	public String saveData(Object mapper, Object p) {
@@ -58,6 +62,15 @@ public class CrudServiceImpl implements CrudService {
 		Integer cn = (Integer) ReflectUtil.runMethod(mapper, "insertSelective", p);
 		if (cn <= 0)
 			return "-101";
+		// 增加时间记录
+		SysTimeList record = new SysTimeList();
+		record.setBillId(id);
+		record.setCreateTime(new Date());
+		Object updateUser = ReflectUtil.getValue(p, "getUpdateUser");
+		if (null != updateUser) {
+			record.setCreateUser(updateUser.toString());
+		}
+		this.sysTimeListMapper.insertSelective(record);
 		return id;
 	}
 
@@ -75,7 +88,21 @@ public class CrudServiceImpl implements CrudService {
 		Integer cn = (Integer) ReflectUtil.runMethod(mapper, "updateByPrimaryKey", t);
 		if (cn <= 0)
 			return "-101";
+		// 更新时间记录
+		this.updateTime(id, p);
 		return id;
+	}
+
+	private void updateTime(String id, Object p) {
+		SysTimeList record = this.sysTimeListMapper.selectByPrimaryKey(id);
+		if (record == null)
+			return;
+		record.setUpdateTime(new Date());
+		Object updateUser = ReflectUtil.getValue(p, "getUpdateUser");
+		if (null != updateUser) {
+			record.setUpdateUser(updateUser.toString());
+		}
+		this.sysTimeListMapper.updateByPrimaryKey(record);
 	}
 
 	@Override
@@ -114,12 +141,11 @@ public class CrudServiceImpl implements CrudService {
 		if (!"0".equals(status)) {
 			return -301;
 		}
-		String updateUser = ReflectUtil.getValue(p, "getUpdateUser").toString();
 		// 更新状态
 		ReflectUtil.runMethod(t, "setStatus", "1");
-		ReflectUtil.runMethod(t, "setUpdateUser", updateUser);
 		Integer cn = (Integer) ReflectUtil.runMethod(mapper, "updateByPrimaryKey", t);
 		this.addAuthList(p, id, 1);
+		this.updateTime(id, p);
 		return cn;
 	}
 
@@ -148,7 +174,9 @@ public class CrudServiceImpl implements CrudService {
 		ReflectUtil.runMethod(t, "setStatus", nextStatus.toString());
 		Integer cn = (Integer) ReflectUtil.runMethod(mapper, "updateByPrimaryKey", t);
 		// 增加审核记录
+		DTOUtil.copyPropertiesIgnoreNull(t, p);
 		this.addAuthList(p, id, nextStatus);
+		this.updateTime(id, p);
 		return cn;
 	}
 
@@ -192,6 +220,7 @@ public class CrudServiceImpl implements CrudService {
 		Integer cn = (Integer) ReflectUtil.runMethod(mapper, "updateByPrimaryKey", t);
 		// 增加审核记录
 		this.addAuthList(p, id, 99);
+		this.updateTime(id, p);
 		return cn;
 	}
 

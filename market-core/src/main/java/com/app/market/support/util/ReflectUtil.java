@@ -12,10 +12,14 @@ public class ReflectUtil {
 	 */
 	public static boolean checkMethod(Object obj, String name) {
 		MethodAccess access = MethodAccess.get(obj.getClass());
-		Integer index = access.getIndex(name);
-		if (index >= 0) {
-			return true;
-		} else {
+		try {
+			Integer index = access.getIndex(name);
+			if (index >= 0) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -29,6 +33,9 @@ public class ReflectUtil {
 	 */
 	public static Object getValue(Object obj, String name) {
 		MethodAccess access = MethodAccess.get(obj.getClass());
+		if (!checkMethod(obj, name)) {
+			return "";
+		}
 		Object ret = access.invoke(obj, name);
 		if (ret != null) {
 			return ret;

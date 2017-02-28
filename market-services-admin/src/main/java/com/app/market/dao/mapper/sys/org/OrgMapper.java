@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Param;
 
 import com.app.market.dto.sys.SysOrgAuthDTO;
+import com.app.market.dto.sys.SysOrgDTO;
 import com.app.market.dto.sys.SysRoleDTO;
 import com.app.market.dto.sys.SysUserRoleDTO;
 
@@ -15,7 +16,7 @@ public interface OrgMapper {
 	 * 
 	 * @return
 	 */
-	List<Map<String, String>> getOrgList();
+	List<Map<String, String>> getOrgList(@Param("param") SysOrgDTO p);
 
 	/**
 	 * 获取机构权限信息

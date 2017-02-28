@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.app.market.dao.entity.sys.mybatis.SysUser;
-import com.app.market.dao.entity.sys.mybatis.SysUserExample;
 import com.app.market.dao.mapper.sys.auth.AuthMapper;
 import com.app.market.dao.mapper.sys.mybatis.SysAuthMapper;
 import com.app.market.dao.mapper.sys.mybatis.SysUserMapper;
@@ -36,17 +35,15 @@ public class AuthServiceImpl implements AuthService {
 	@Override
 	public String authUser(SysUserDTO p) {
 		try {
-			SysUserExample ex = new SysUserExample();
-			ex.createCriteria().andUserNameEqualTo(p.getUserName());
-			List<SysUser> list = sysUserMapper.selectByExample(ex);
+			List<Map<String, String>> list = this.authMapper.getUserNamePW(p.getUserName());
 			if (list == null || list.size() <= 0) {
 				return "-201";
 			}
-			SysUser temp = list.get(0);
-			if (!temp.getPassWord().equals(p.getPassWord())) {
+			Map<String, String> temp = list.get(0);
+			if (!temp.get("passWord").equals(p.getPassWord())) {
 				return "-202";
 			}
-			String token = TokenUtil.encryptToken(temp.getId());
+			String token = TokenUtil.encryptToken(temp.get("id"));
 			return token;
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -10,6 +10,12 @@
 		a.flag AS "flag"
 		FROM
 		sys_org a
+		where 1=1
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.NAME,a.flag) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
 	</select>
 	<!-- 获取机构权限 -->
 	<select id="getOrgAuthList" parameterType="java.lang.String"
@@ -153,7 +159,7 @@
 	</select>
 	<!-- 删除部门职务 -->
 	<update id="deleteDeptRoleData" parameterType="java.lang.String">
-		
+
 		DELETE
 		FROM
 		sys_role_auth
@@ -167,19 +173,19 @@
 		and
 		sys_role.id=#{id,jdbcType=VARCHAR}
 		);
-		
+
 		DELETE
 		FROM
 		sys_role
 		WHERE
 		id
 		=#{id,jdbcType=VARCHAR};
-		
+
 		DELETE
 		FROM sys_user_role where
 		role_id=#{id,jdbcType=VARCHAR};
-		
-		
+
+
 	</update>
 	<!-- 获取机构权限列表 -->
 	<select id="getOrgAllAuth" parameterType="java.lang.String"

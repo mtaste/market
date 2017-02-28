@@ -11,13 +11,15 @@
 		a.contact AS "contact",
 		a.flag AS "flag",
 		a.mobile AS "mobile",
-		b.`name` as "status"
+		b.`name`
+		as "status"
 		FROM
 		mg_org_register a,
 		sys_dic b
 		WHERE
 		1 = 1
-		and b.dic_type='status'
+		and
+		b.dic_type='status'
 		and b.val=a.`status`
 		<if test="param.keyword!=null and param.keyword != ''">
 			and
@@ -25,5 +27,206 @@
 			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
 		</if>
 	</select>
+	<!-- 获取单据列表 -->
+	<select id="getOrgAuthBillList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		b. NAME AS "name",
+		b.flag AS "flag",
+		a.auth_type AS "authType",
+		d.user_name AS "updateUser",
+		e. NAME AS
+		"status",
+		b.id AS "orgId"
+		FROM
+		mg_org_auth a,
+		sys_org b,
+		sys_time_list c
+		LEFT JOIN sys_user d ON c.update_user = d.id,
+		v_status e
+		WHERE
+		a.org_id =
+		b.id
+		AND a.id = c.bill_id
+		AND e.val = a.`status`
+	</select>
+	<!-- 可授权列表 -->
+	<select id="getAuthBillAuthList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.parent_id AS "parentId",
+		a. NAME AS
+		"name",
+		a.auth_url AS "authUrl",
+		a.auth_icon AS "authIcon"
+		FROM
+		sys_auth a
+		WHERE
+		a.mg_type='1'
+		ORDER BY
+		a.seq
+	</select>
+
+	<select id="getOrgAuthOrgList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.NAME AS "name",
+		a.flag AS "flag"
+		FROM
+		sys_org a
+		where 1=1
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.name,a.flag) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+	</select>
+
+
+	<update id="saveBillAuths" parameterType="java.lang.String">
+		DELETE from
+		mg_org_auth_detail
+		where bill_id=#{billId,jdbcType=VARCHAR};
+
+		INSERT INTO
+		mg_org_auth_detail
+		(id, bill_id, auth_id) SELECT
+		UUID(),
+		#{billId,jdbcType=VARCHAR},
+		a.id
+		FROM
+		sys_auth a
+		WHERE
+		CONCAT(',',#{authIds,jdbcType=VARCHAR},
+		',') LIKE CONCAT('%,',
+		a.id,
+		',%');
+	</update>
+
+
+	<select id="getAuthBillDetail" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.auth_id AS "id"
+		FROM
+		mg_org_auth_detail a
+		where
+		a.bill_id=#{param.id,jdbcType=VARCHAR}
+	</select>
+
+
+	<update id="addOrgAuthByBill" parameterType="java.lang.String">
+		INSERT INTO
+		sys_org_auth (id, org_id, auth_id) SELECT
+		UUID(),
+		aa.id,
+		a.id
+		FROM
+		sys_auth a,
+		sys_org aa
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		mg_org_auth_detail b,
+		mg_org_auth c
+		WHERE
+		b.auth_id = a.id
+		AND b.bill_id = c.id
+		AND aa.id =
+		c.org_id
+		AND c.auth_type = '1'
+		AND c.status='2'
+		AND
+		c.id=#{billId,jdbcType=VARCHAR}
+		)
+		AND
+		NOT EXISTS (
+		SELECT
+		1
+		FROM
+		sys_org_auth
+		d
+		WHERE
+		d.auth_id = a.id
+		AND d.org_id
+		= aa.id
+		)
+		AND a.mg_type =
+		'1'
+	</update>
+
+
+	<update id="delOrgAuthByBill" parameterType="java.lang.String">
+		DELETE
+		FROM
+		sys_org_auth
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_auth a,
+		sys_org aa
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		mg_org_auth_detail b,
+		mg_org_auth c
+		WHERE
+		b.auth_id = a.id
+		AND
+		b.bill_id = c.id
+		AND aa.id = c.org_id
+		AND c.auth_type = '-1'
+		AND c.
+		STATUS = '2'
+		AND
+		c.id=#{billId,jdbcType=VARCHAR}
+		)
+		AND a.mg_type = '1'
+		AND
+		sys_org_auth.auth_id = a.id
+		AND
+		sys_org_auth.org_id = aa.id
+		)
+	</update>
+
+	<select id="getAuths" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.`name` AS "name",
+		a.parent_id AS
+		"parentId"
+		FROM
+		sys_auth a
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_org_auth b
+		WHERE
+		b.org_id=#{param.orgId,jdbcType=VARCHAR}
+		AND
+		FIND_IN_SET(
+		a.id,
+		getSysAuthParentList (b.auth_id)
+		)
+		)
+		order by a.seq
+	</select>
+
+	<update id="initOrgAdminUser" parameterType="java.lang.String">
+		select
+		initOrgAdminUser(#{orgId,jdbcType=VARCHAR})
+	</update>
 
 </mapper>

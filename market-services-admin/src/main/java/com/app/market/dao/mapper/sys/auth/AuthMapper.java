@@ -32,4 +32,12 @@ public interface AuthMapper {
 	 */
 	List<Map<String, String>> getBillAuthList(@Param("param") SysApprovalListDTO p);
 
+	/**
+	 * 判断用户是否存在
+	 * 
+	 * @param userName
+	 * @return
+	 */
+	List<Map<String, String>> getUserNamePW(@Param("userName") String userName);
+
 }

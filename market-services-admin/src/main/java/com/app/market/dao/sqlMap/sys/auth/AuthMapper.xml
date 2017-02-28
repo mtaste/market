@@ -66,4 +66,18 @@
 		DESC
 	</select>
 
+	<select id="getUserNamePW" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.pass_word as "passWord",a.id as "id"
+		FROM
+		sys_user a,
+		sys_org b
+		WHERE
+		a.org_id =
+		b.id
+		and CONCAT(b.flag, '_',
+		a.user_name)=#{userName,jdbcType=VARCHAR}
+	</select>
+
 </mapper>
