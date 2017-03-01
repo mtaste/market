@@ -17,7 +17,7 @@
 		<javaClientGenerator targetPackage="com.app.market.dao.mapper.im.mybatis"
 			targetProject="../src/main/java" type="XMLMAPPER" />
 
-		<table tableName="im_product_info" domainObjectName="ImProductInfo">
+		<table tableName="im_product_change_detail" domainObjectName="ImProductChangeDetail">
 		</table>
 		<!-- <table tableName="sys_time_list" domainObjectName="MgOrgAuth"> <columnOverride 
 			column="CREATE_TIME" jdbcType="TIMESTAMP" /> <columnOverride column="UPDATE_TIME" 
