@@ -1,23 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.app.market.dao.mapper.crm.cus.CrmCusMapper">
+<mapper namespace="com.app.market.dao.mapper.im.product.ImProductMapper">
 	<!-- 根据用户ID获取组织架构 -->
-	<select id="getCusList" parameterType="java.lang.String"
+	<select id="getList" parameterType="java.lang.String"
 		resultType="java.util.HashMap">
 		SELECT
 		a.id AS "id",
-		a.address AS "address",
-		a.contact AS "contact",
-		a.mobile AS "mobile",
 		a.`name` AS "name",
-		a.remark AS "remark"
+		a.serial_num AS "serialNum",
+		a.self_num AS "selfNum",
+		a.depict AS "depict",
+		a.remark AS
+		"remark"
 		FROM
-		crm_cus_info a
+		im_product_info a
 		where
 		a.org_id=#{param.orgId,jdbcType=VARCHAR}
 		<if test="param.keyword!=null and param.keyword != ''">
 			and
-			CONCAT(a.name,a.address,a.contact,a.mobile) like
+			CONCAT(a.`name`,a.serial_num,a.self_num) like
 			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
 		</if>
 	</select>

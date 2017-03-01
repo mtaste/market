@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.app.market.dao.mapper.crm.cus.CrmCusMapper">
+<mapper namespace="com.app.market.dao.mapper.crm.sup.CrmSupMapper">
 	<!-- 根据用户ID获取组织架构 -->
-	<select id="getCusList" parameterType="java.lang.String"
+	<select id="getSupList" parameterType="java.lang.String"
 		resultType="java.util.HashMap">
 		SELECT
 		a.id AS "id",
@@ -12,7 +12,7 @@
 		a.`name` AS "name",
 		a.remark AS "remark"
 		FROM
-		crm_cus_info a
+		crm_sup_info a
 		where
 		a.org_id=#{param.orgId,jdbcType=VARCHAR}
 		<if test="param.keyword!=null and param.keyword != ''">
