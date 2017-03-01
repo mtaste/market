@@ -160,4 +160,9 @@ public class OrgServiceImpl implements OrgService {
 		return ret;
 	}
 
+	@Override
+	public Map<String, String> getOrgInfo(String userId) {
+		return this.orgMapper.getOrgInfoByUser(userId);
+	}
+
 }

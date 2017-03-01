@@ -20,6 +20,7 @@ import com.app.market.dto.mg.MgOrgAuthDTO;
 import com.app.market.dto.mg.MgOrgRegisterDTO;
 import com.app.market.service.common.CrudService;
 import com.app.market.service.mg.MgOrgService;
+import com.app.market.support.util.DTOUtil;
 import com.app.market.support.util.GUID;
 import com.app.market.support.util.Version;
 
@@ -95,6 +96,7 @@ public class MgOrgServiceImpl implements MgOrgService {
 		Integer cn = this.crudService.authData(this.mgOrgRegisterMapper, p);
 		if (cn >= 1 && "2".equals(p.getStatus())) {
 			SysOrg org = new SysOrg();
+			DTOUtil.copyPropertiesIgnoreNull(p, org);
 			org.setId(GUID.getUUID());
 			org.setFlag(p.getFlag());
 			org.setName(p.getName());

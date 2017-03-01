@@ -130,4 +130,12 @@ public interface OrgMapper {
 	 */
 	List<Map<String, String>> getDeptUserList(@Param("param") SysRoleDTO p);
 
+	/**
+	 * 获取机构基础信息
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	Map<String, String> getOrgInfoByUser(@Param("userId") String userId);
+
 }

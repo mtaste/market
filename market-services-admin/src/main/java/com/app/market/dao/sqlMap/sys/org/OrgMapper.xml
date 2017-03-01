@@ -371,4 +371,26 @@
 		)
 	</select>
 
+	<!-- 获取机构基础信息 -->
+	<select id="getOrgInfoByUser" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.`name` AS "name",
+		a.flag AS "flag",
+		a.address AS
+		"address",
+		a.contact AS "contact",
+		a.mobile AS "mobile",
+		a.`status` AS
+		"status"
+		FROM
+		sys_org a,
+		sys_user b
+		WHERE
+		a.id = b.org_id
+		and
+		b.id=#{userId,jdbcType=VARCHAR}
+	</select>
+
+
 </mapper>

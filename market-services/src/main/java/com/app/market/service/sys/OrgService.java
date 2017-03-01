@@ -166,4 +166,12 @@ public interface OrgService {
 	 */
 	PageBean<Map<String, String>> getDeptUserList(PageDTO page, SysRoleDTO p);
 
+	/**
+	 * 获取机构基础信息
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	Map<String, String> getOrgInfo(String userId);
+
 }
