@@ -1,11 +1,13 @@
 package com.app.market.service.im.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
 import com.app.market.dao.entity.im.mybatis.ImProductChange;
+import com.app.market.dao.entity.im.mybatis.ImProductChangeDetail;
 import com.app.market.dao.entity.im.mybatis.ImProductChangeDetailExample;
 import com.app.market.dao.mapper.im.mybatis.ImProductChangeDetailMapper;
 import com.app.market.dao.mapper.im.mybatis.ImProductChangeMapper;
@@ -14,6 +16,7 @@ import com.app.market.dao.mapper.im.product.ImProductMapper;
 import com.app.market.dto.common.PageBean;
 import com.app.market.dto.common.PageDTO;
 import com.app.market.dto.im.ImProductChangeDTO;
+import com.app.market.dto.im.ImProductChangeDetailDTO;
 import com.app.market.dto.im.ImProductInfoDTO;
 import com.app.market.service.common.CrudService;
 import com.app.market.service.im.ProductService;
@@ -101,9 +104,9 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 		p.setStatus("0");
+		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
+		p.setOrgId(orgId);
 		ret = this.crudService.saveData(this.imProductChangeMapper, p);
-		// 保存授权明细
-		this.imProductMapper.saveChangeDetail(p.getId(), p.getProductIds());
 		return ret;
 	}
 
@@ -117,8 +120,53 @@ public class ProductServiceImpl implements ProductService {
 	public String authChangeData(ImProductChangeDTO p) {
 		Integer cn = this.crudService.authData(this.imProductChangeMapper, p);
 		if (cn >= 1 && "2".equals(p.getStatus())) {
-			// TODO 变更库存
+			this.imProductMapper.saveChangeQty(p);
 		}
+		return cn.toString();
+	}
+
+	@Override
+	public PageBean<Map<String, String>> getChangeProductList(PageDTO page, ImProductChangeDTO p) {
+		PageBean<Map<String, String>> ret = null;
+		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
+		p.setOrgId(orgId);
+		ret = this.crudService.getListPage(page, this.imProductMapper, "getChangeProductList", p);
+		return ret;
+	}
+
+	@Override
+	public PageBean<Map<String, String>> changeDetail(PageDTO page, ImProductChangeDTO p) {
+		PageBean<Map<String, String>> ret = null;
+		ret = this.crudService.getListPage(page, this.imProductMapper, "getChangeDetail", p);
+		return ret;
+	}
+
+	@Override
+	public String removeChangeDetail(ImProductChangeDTO p) {
+		// 保存授权明细
+		Integer cn = this.imProductMapper.removeChangeDetail(p);
+		return cn.toString();
+	}
+
+	@Override
+	public String addChangeDetail(ImProductChangeDTO p) {
+		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
+		p.setOrgId(orgId);
+		Integer cn = this.imProductMapper.saveChangeDetail(p);
+		return cn.toString();
+	}
+
+	@Override
+	public String addChangeDetailQty(ImProductChangeDetailDTO p) {
+		// ID为产品ID,bill_id为单据ID
+		ImProductChangeDetailExample ex = new ImProductChangeDetailExample();
+		ex.createCriteria().andBillIdEqualTo(p.getBillId()).andProductIdEqualTo(p.getId());
+		List<ImProductChangeDetail> tList = this.imProductChangeDetailMapper.selectByExample(ex);
+		if (tList == null || tList.size() <= 0) {
+			return "-101";
+		}
+		tList.get(0).setQty(p.getQty());
+		Integer cn = this.imProductChangeDetailMapper.updateByPrimaryKey(tList.get(0));
 		return cn.toString();
 	}
 

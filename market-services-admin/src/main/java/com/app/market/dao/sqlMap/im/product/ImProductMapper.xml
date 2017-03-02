@@ -23,4 +23,122 @@
 		</if>
 	</select>
 
+	<select id="getChangeList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.title AS "title",
+		a.remark AS "remark",
+		b. NAME AS "status"
+		FROM
+		im_product_change a,
+		v_status b
+		WHERE
+		a.`status` =
+		b.val
+	</select>
+
+	<select id="getChangeProductList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.`name` AS "name",
+		a.self_num AS
+		"selfNum"
+		FROM
+		im_product_info a
+		WHERE
+		a.org_id
+		=#{param.orgId,jdbcType=VARCHAR}
+		AND NOT
+		EXISTS (
+		SELECT
+		1
+		FROM
+		im_product_change_detail b
+		WHERE
+		a.id = b.product_id
+		and
+		b.bill_id=#{param.id,jdbcType=VARCHAR}
+		)
+	</select>
+
+	<select id="getChangeDetail" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		b.id AS "id",
+		b.`name` AS "name",
+		b.self_num AS
+		"selfNum",
+		a.qty AS "qty"
+		FROM
+		im_product_change_detail a,
+		im_product_info b
+		WHERE
+		a.product_id = b.id
+		AND a.bill_id
+		=#{param.id,jdbcType=VARCHAR}
+	</select>
+
+	<update id="saveChangeDetail" parameterType="java.lang.String">
+		INSERT INTO
+		im_product_change_detail (id, bill_id, product_id,qty) SELECT
+		UUID(),
+		#{param.id,jdbcType=VARCHAR},
+		a.id,
+		1
+		FROM
+		im_product_info a
+		WHERE
+		CONCAT(',',#{param.productIds,jdbcType=VARCHAR}, ',') LIKE
+		CONCAT('%,', a.id, ',%')
+		AND NOT
+		EXISTS (
+		SELECT
+		1
+		FROM
+		im_product_change_detail b
+		WHERE
+		a.id = b.product_id
+		and
+		b.bill_id=#{param.id,jdbcType=VARCHAR}
+		)
+		and
+		a.org_id=#{param.orgId,jdbcType=VARCHAR}
+	</update>
+
+	<update id="removeChangeDetail" parameterType="java.lang.String">
+		DELETE
+		FROM
+		im_product_change_detail
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		im_product_info a
+		WHERE
+		CONCAT(
+		',',
+		#{param.productIds,jdbcType=VARCHAR}, ',') LIKE
+		CONCAT('%,', a.id, ',%')
+		AND im_product_change_detail.product_id = a.id
+		AND im_product_change_detail.bill_id =#{param.id,jdbcType=VARCHAR}
+		)
+	</update>
+
+	<update id="saveChangeQty" parameterType="java.lang.String">
+		UPDATE im_product_info
+		SET qty = IFNULL(qty,0) + (
+		SELECT
+		qty
+		FROM
+		im_product_change_detail b
+		WHERE
+		b.bill_id = #{param.id,jdbcType=VARCHAR}
+		AND b.product_id =
+		im_product_info.id
+		)
+	</update>
+
 </mapper>

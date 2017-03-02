@@ -5,6 +5,7 @@ import java.util.Map;
 import com.app.market.dto.common.PageBean;
 import com.app.market.dto.common.PageDTO;
 import com.app.market.dto.im.ImProductChangeDTO;
+import com.app.market.dto.im.ImProductChangeDetailDTO;
 import com.app.market.dto.im.ImProductInfoDTO;
 
 public interface ProductService {
@@ -73,5 +74,47 @@ public interface ProductService {
 	 * @return
 	 */
 	String authChangeData(ImProductChangeDTO p);
+
+	/**
+	 * 获取产品列表
+	 * 
+	 * @param page
+	 * @param p
+	 * @return
+	 */
+	PageBean<Map<String, String>> getChangeProductList(PageDTO page, ImProductChangeDTO p);
+
+	/**
+	 * 获取库存变更明细
+	 * 
+	 * @param page
+	 * @param p
+	 * @return
+	 */
+	PageBean<Map<String, String>> changeDetail(PageDTO page, ImProductChangeDTO p);
+
+	/**
+	 * 删除明细
+	 * 
+	 * @param p
+	 * @return
+	 */
+	String removeChangeDetail(ImProductChangeDTO p);
+
+	/**
+	 * 增加明细
+	 * 
+	 * @param p
+	 * @return
+	 */
+	String addChangeDetail(ImProductChangeDTO p);
+
+	/**
+	 * 改变明细数据
+	 * 
+	 * @param p
+	 * @return
+	 */
+	String addChangeDetailQty(ImProductChangeDetailDTO p);
 
 }
