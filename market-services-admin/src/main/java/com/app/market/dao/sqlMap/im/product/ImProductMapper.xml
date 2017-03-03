@@ -29,13 +29,24 @@
 		a.id AS "id",
 		a.title AS "title",
 		a.remark AS "remark",
-		b. NAME AS "status"
+		b. NAME AS
+		"status"
 		FROM
 		im_product_change a,
 		v_status b
 		WHERE
 		a.`status` =
 		b.val
+		and
+		a.org_id=#{param.orgId,jdbcType=VARCHAR}
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.title,remark) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="param.status!=null and param.status != ''">
+			and a.`status`=#{param.status,jdbcType=VARCHAR}
+		</if>
 	</select>
 
 	<select id="getChangeProductList" parameterType="java.lang.String"

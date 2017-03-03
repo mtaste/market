@@ -93,4 +93,9 @@ public class AuthServiceImpl implements AuthService {
 		return this.authMapper.getBillAuthList(p);
 	}
 
+	@Override
+	public Map<String, String> getUserInfo(String userId) {
+		return this.userMapper.getUserInfo(userId);
+	}
+
 }

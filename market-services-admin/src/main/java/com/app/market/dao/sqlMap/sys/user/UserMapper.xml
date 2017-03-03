@@ -28,7 +28,8 @@
 		AND
 		FIND_IN_SET(
 		a.id,
-		getSysAuthParentList (b.auth_id)
+		getSysAuthParentList
+		(b.auth_id)
 		)
 		)
 		ORDER BY
@@ -93,4 +94,19 @@
 		WHERE
 		id =#{id,jdbcType=VARCHAR}
 	</update>
+
+
+	<select id="getUserInfo" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.user_name AS "userName",
+		b.`name` AS "orgName",
+		b.flag AS "orgFlag"
+		FROM
+		sys_user a,
+		sys_org b
+		WHERE
+		a.org_id = b.id
+		AND a.id = #{id,jdbcType=VARCHAR}
+	</select>
 </mapper>

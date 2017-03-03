@@ -86,6 +86,8 @@ public class ProductServiceImpl implements ProductService {
 	@Override
 	public PageBean<Map<String, String>> getChangeList(PageDTO page, ImProductChangeDTO p) {
 		PageBean<Map<String, String>> ret = null;
+		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
+		p.setOrgId(orgId);
 		ret = this.crudService.getListPage(page, this.imProductMapper, "getChangeList", p);
 		return ret;
 	}

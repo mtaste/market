@@ -26,6 +26,9 @@
 			CONCAT(a.name,a.address,a.contact,a.mobile) like
 			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
 		</if>
+		<if test="param.status!=null and param.status != ''">
+			and a.status=#{param.status,jdbcType=VARCHAR}
+		</if>
 	</select>
 	<!-- 获取单据列表 -->
 	<select id="getOrgAuthBillList" parameterType="java.lang.String"
@@ -34,22 +37,29 @@
 		a.id AS "id",
 		b. NAME AS "name",
 		b.flag AS "flag",
-		a.auth_type AS "authType",
+		a.auth_type AS
+		"authType",
 		d.user_name AS "updateUser",
 		e. NAME AS
 		"status",
-		b.id AS "orgId"
+		b.id AS
+		"orgId"
 		FROM
 		mg_org_auth a,
 		sys_org b,
 		sys_time_list c
-		LEFT JOIN sys_user d ON c.update_user = d.id,
+		LEFT JOIN sys_user d
+		ON c.update_user = d.id,
 		v_status e
 		WHERE
 		a.org_id =
 		b.id
-		AND a.id = c.bill_id
+		AND a.id =
+		c.bill_id
 		AND e.val = a.`status`
+		<if test="param.status!=null and param.status != ''">
+			and a.status=#{param.status,jdbcType=VARCHAR}
+		</if>
 	</select>
 	<!-- 可授权列表 -->
 	<select id="getAuthBillAuthList" parameterType="java.lang.String"

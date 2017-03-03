@@ -40,4 +40,12 @@ public interface UserMapper {
 	 * @return
 	 */
 	Integer deleteUserData(@Param("id") String id);
+
+	/**
+	 * 获取用户信息
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	Map<String, String> getUserInfo(@Param("id") String userId);
 }

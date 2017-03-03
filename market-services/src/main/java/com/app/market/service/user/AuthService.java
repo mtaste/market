@@ -68,4 +68,12 @@ public interface AuthService {
 	 * @return
 	 */
 	List<Map<String, String>> getBillAuthList(SysApprovalListDTO p);
+
+	/**
+	 * 获取用户信息
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	Map<String, String> getUserInfo(String userId);
 }
