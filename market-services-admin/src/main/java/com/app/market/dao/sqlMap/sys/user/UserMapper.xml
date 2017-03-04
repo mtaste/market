@@ -72,13 +72,20 @@
 		"passWord",
 		a.mobile AS "mobile",
 		a.user_name as "userName",
+		a.status as "status",
+		b.name as "statusText",
 		getUserRole(a.id) as
 		"roleName"
 		FROM
 		sys_user
-		a
+		a,
+		v_valid_status b
 		where
+		a.status=b.val and
 		a.org_id=#{param.orgId,jdbcType=VARCHAR}
+		<if test="param.status!=null and param.status != ''">
+			and a.status=#{param.status,jdbcType=VARCHAR}
+		</if>
 		<if test="param.keyword!=null and param.keyword != ''">
 			and
 			CONCAT(a.user_name,a.name,a.mobile) like
@@ -107,6 +114,7 @@
 		sys_org b
 		WHERE
 		a.org_id = b.id
-		AND a.id = #{id,jdbcType=VARCHAR}
+		AND
+		a.id = #{id,jdbcType=VARCHAR}
 	</select>
 </mapper>

@@ -11,7 +11,8 @@
 		a.self_num AS "selfNum",
 		a.depict AS "depict",
 		a.remark AS
-		"remark"
+		"remark",
+		a.qty as "qty"
 		FROM
 		im_product_info a
 		where
