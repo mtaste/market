@@ -22,7 +22,7 @@ public interface ImProductMapper {
 	 * 删除明细
 	 * 
 	 * @param id
-	 * @param productIds
+	 * @param selectIds
 	 * @return
 	 */
 	Integer removeChangeDetail(@Param("param") ImProductChangeDTO p);
@@ -31,7 +31,7 @@ public interface ImProductMapper {
 	 * 保存明细
 	 * 
 	 * @param id
-	 * @param productIds
+	 * @param selectIds
 	 * @return
 	 */
 	Integer saveChangeDetail(@Param("param") ImProductChangeDTO p);
@@ -40,7 +40,7 @@ public interface ImProductMapper {
 	 * 更新库存明细
 	 * 
 	 * @param id
-	 * @param productIds
+	 * @param selectIds
 	 * @return
 	 */
 	Integer saveChangeQty(@Param("param") ImProductChangeDTO p);

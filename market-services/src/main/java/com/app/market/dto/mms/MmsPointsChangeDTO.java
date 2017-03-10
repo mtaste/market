@@ -1,10 +1,10 @@
-package com.app.market.dto.im;
+package com.app.market.dto.mms;
 
 import java.io.Serializable;
 
-import com.app.market.dao.entity.im.mybatis.ImProductChange;
+import com.app.market.dao.entity.mms.mybatis.MmsPointsChange;
 
-public class ImProductChangeDTO extends ImProductChange implements Serializable {
+public class MmsPointsChangeDTO extends MmsPointsChange implements Serializable {
 	/**
 	 * 
 	 */
@@ -36,5 +36,4 @@ public class ImProductChangeDTO extends ImProductChange implements Serializable 
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
 	}
-
 }

@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.market.dao.mapper.mms.info.MmsMapper">
+	<!-- 获取列表 -->
+	<select id="getInfoList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.user_name AS "userName",
+		a.address AS "address",
+		a.mobile AS "mobile",
+		a.`name` AS "name",
+		a.end_time AS "endTime",
+		a.`status` AS "status",
+		b.`name` as "statusText",
+		a.points AS "points"
+		FROM
+		mms_info a,
+		v_status b
+		where a.`status`=b.val
+		and
+		a.org_id=#{param.orgId,jdbcType=VARCHAR}
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.name,a.address,a.user_name) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="param.status!=null and param.status != ''">
+			and a.`status`=#{param.status,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+
+	<select id="getPointChangeList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.title AS "title",
+		a.remark AS "remark",
+		b. NAME AS
+		"status"
+		FROM
+		mms_points_change a,
+		v_status b
+		WHERE
+		a.`status` =
+		b.val
+		and
+		a.org_id=#{param.orgId,jdbcType=VARCHAR}
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.title,remark) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="param.status!=null and param.status != ''">
+			and a.`status`=#{param.status,jdbcType=VARCHAR}
+		</if>
+	</select>
+
+
+	<select id="getPointsChangeDetail" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		b.id AS "id",
+		b.`name` AS "name",
+		b.user_name AS
+		"userName",
+		a.points AS "points"
+		FROM
+		mms_points_change_detail a,
+		mms_info b
+		WHERE
+		a.info_id = b.id
+		AND a.bill_id
+		=#{param.id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getPointsChangeMemberList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.`name` AS "name",
+		a.user_name AS
+		"userName"
+		FROM
+		mms_info a
+		WHERE
+		a.org_id =#{param.orgId,jdbcType=VARCHAR}
+		AND NOT EXISTS
+		(
+		SELECT
+		1
+		FROM
+		mms_points_change_detail b
+		WHERE
+		a.id =
+		b.info_id
+		AND
+		b.bill_id = #{param.id,jdbcType=VARCHAR}
+		)
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.user_name,name) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+	</select>
+
+
+	<update id="removePointsChangeDetail" parameterType="java.lang.String">
+		DELETE
+		FROM
+		mms_points_change_detail
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		mms_info a
+		WHERE
+		CONCAT(',', #{param.selectIds,jdbcType=VARCHAR}, ',') LIKE
+		CONCAT('%,', a.id,
+		',%')
+		AND mms_points_change_detail.info_id = a.id
+		AND
+		mms_points_change_detail.bill_id =#{param.id,jdbcType=VARCHAR})
+	</update>
+
+	<update id="savePointsChangeDetail" parameterType="java.lang.String">
+		INSERT INTO
+		mms_points_change_detail (id, bill_id, info_id, points) SELECT
+		UUID(),
+		#{param.id,jdbcType=VARCHAR},
+		a.id,
+		0
+		FROM
+		mms_info a
+		WHERE
+		CONCAT(
+		',',#{param.selectIds,jdbcType=VARCHAR}, ',') LIKE
+		CONCAT('%,', a.id,
+		',%')
+		AND NOT EXISTS (
+		SELECT
+		1
+		FROM
+		mms_points_change_detail b
+		WHERE
+		a.id =
+		b.info_id
+		AND b.bill_id = #{param.id,jdbcType=VARCHAR}
+		)
+		AND a.org_id
+		=#{param.orgId,jdbcType=VARCHAR}
+	</update>
+	<update id="saveMemberPointsChange" parameterType="java.lang.String">
+		UPDATE
+		mms_info
+		SET points = IFNULL(points,0) + (
+		SELECT
+		points FROM
+		mms_points_change_detail b
+		WHERE
+		b.bill_id =
+		#{param.id,jdbcType=VARCHAR}
+		AND b.info_id =
+		mms_info.id
+		)
+	</update>
+
+
+</mapper>

@@ -19,7 +19,7 @@
 		a.org_id=#{param.orgId,jdbcType=VARCHAR}
 		<if test="param.keyword!=null and param.keyword != ''">
 			and
-			CONCAT(a.`name`,a.serial_num,a.self_num) like
+			CONCAT(a.`name`,a.self_num) like
 			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
 		</if>
 	</select>
@@ -73,6 +73,11 @@
 		and
 		b.bill_id=#{param.id,jdbcType=VARCHAR}
 		)
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.name,a.self_num) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
 	</select>
 
 	<select id="getChangeDetail" parameterType="java.lang.String"
@@ -102,8 +107,9 @@
 		FROM
 		im_product_info a
 		WHERE
-		CONCAT(',',#{param.productIds,jdbcType=VARCHAR}, ',') LIKE
-		CONCAT('%,', a.id, ',%')
+		CONCAT(',',#{param.selectIds,jdbcType=VARCHAR}, ',') LIKE
+		CONCAT('%,',
+		a.id, ',%')
 		AND NOT
 		EXISTS (
 		SELECT

@@ -1,25 +1,17 @@
-package com.app.market.dto.im;
+package com.app.market.dto.mms;
 
 import java.io.Serializable;
 
-import com.app.market.dao.entity.im.mybatis.ImProductChange;
+import com.app.market.dao.entity.mms.mybatis.MmsInfo;
 
-public class ImProductChangeDTO extends ImProductChange implements Serializable {
+public class MmsInfoDTO extends MmsInfo implements Serializable {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private String keyword;
 	private String updateUser;
-	private String selectIds;
-
-	public String getSelectIds() {
-		return selectIds;
-	}
-
-	public void setSelectIds(String selectIds) {
-		this.selectIds = selectIds;
-	}
 
 	public String getUpdateUser() {
 		return updateUser;
