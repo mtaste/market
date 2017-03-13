@@ -114,7 +114,6 @@ public class MmsServiceImpl implements MmsService {
 	@Override
 	public PageBean<Map<String, String>> pointsChangeDetail(PageDTO page, MmsPointsChangeDTO p) {
 		PageBean<Map<String, String>> ret = null;
-		this.mmsMapper.getPointsChangeDetail(p);
 		ret = this.crudService.getListPage(page, this.mmsMapper, "getPointsChangeDetail", p);
 		return ret;
 	}

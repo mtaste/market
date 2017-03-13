@@ -10,15 +10,15 @@
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
 			connectionURL="jdbc:mysql://120.24.73.245:3306/test?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
 			userId="jst" password="=Jst1234" />
-		<javaModelGenerator targetPackage="com.app.market.dao.entity.sys.mybatis"
+		<javaModelGenerator targetPackage="com.app.market.dao.entity.agent.mybatis"
 			targetProject="../../market-services/src/main/java" />
-		<sqlMapGenerator targetPackage="com.app.market.dao.sqlMap.sys.mybatis"
+		<sqlMapGenerator targetPackage="com.app.market.dao.sqlMap.agent.mybatis"
 			targetProject="../src/main/java" />
-		<javaClientGenerator targetPackage="com.app.market.dao.mapper.sys.mybatis"
+		<javaClientGenerator targetPackage="com.app.market.dao.mapper.agent.mybatis"
 			targetProject="../src/main/java" type="XMLMAPPER" />
 
-		<table tableName="sys_user" domainObjectName="SysUser">
-			<columnOverride column="CREATE_TIME" jdbcType="TIMESTAMP" />
+		<table tableName="agent_points_change_detail" domainObjectName="AgentPointsChangeDetail">
+			 
 		</table>
 		<!-- <table tableName="sys_time_list" domainObjectName="MgOrgAuth"> <columnOverride 
 			column="CREATE_TIME" jdbcType="TIMESTAMP" /> <columnOverride column="UPDATE_TIME" 
