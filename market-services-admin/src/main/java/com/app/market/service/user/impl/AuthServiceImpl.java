@@ -43,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
 			if (!temp.get("passWord").equals(p.getPassWord())) {
 				return "-202";
 			}
-			if (!"1".equals(temp.get("status").toString())) {
+			if (!"10".equals(temp.get("status").toString())) {
 				return "-204";
 			}
 			String token = TokenUtil.encryptToken(temp.get("id"));

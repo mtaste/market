@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.market.dao.mapper.agent.info.AgentMapper">
+	<!-- 获取列表 -->
+	<select id="getInfoList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.user_name AS "userName",
+		a.`name` AS
+		"name",
+		a.mobile AS "mobile",
+		a.address AS "address",
+		a.points AS
+		"points",
+		a.`status` AS "status",
+		b.`name` AS "statusText"
+		FROM
+		sys_user
+		a,
+		v_status
+		b
+		WHERE
+		a.`status` = b.val
+		AND a.user_type = '2'
+		AND a.org_id =
+		#{param.orgId,jdbcType=VARCHAR}
+		AND a.create_user =
+		#{param.updateUser,jdbcType=VARCHAR}
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.name,a.address,a.user_name,a.mobile) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+	</select>
+
+	<update id="saveInfoRole" parameterType="java.lang.String">
+		DELETE
+		FROM
+		sys_user_role
+		WHERE
+		sys_user_role.user_id =#{userId,jdbcType=VARCHAR};
+		INSERT INTO
+		sys_user_role (id, user_id, role_id) SELECT
+		uuid(),
+		#{userId,jdbcType=VARCHAR},
+		a.role_id
+		FROM
+		sys_user_role a
+		WHERE
+		a.user_id
+		=#{updateUser,jdbcType=VARCHAR};
+	</update>
+</mapper>

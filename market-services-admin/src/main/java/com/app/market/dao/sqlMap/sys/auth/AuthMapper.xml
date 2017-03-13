@@ -62,7 +62,7 @@
 		=#{param.id,jdbcType=VARCHAR}
 		AND a.create_user = b.id
 		ORDER BY
-		create_time
+		a.create_time
 		DESC
 	</select>
 

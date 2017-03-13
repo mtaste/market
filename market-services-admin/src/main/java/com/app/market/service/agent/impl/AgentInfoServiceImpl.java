@@ -1,4 +1,4 @@
-package com.app.market.service.user.impl;
+package com.app.market.service.agent.impl;
 
 import java.util.Date;
 import java.util.List;
@@ -9,43 +9,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.app.market.dao.entity.sys.mybatis.SysUser;
 import com.app.market.dao.entity.sys.mybatis.SysUserExample;
+import com.app.market.dao.mapper.agent.info.AgentMapper;
 import com.app.market.dao.mapper.sys.mybatis.SysUserMapper;
-import com.app.market.dao.mapper.sys.user.UserMapper;
 import com.app.market.dto.common.PageBean;
 import com.app.market.dto.common.PageDTO;
 import com.app.market.dto.user.SysUserDTO;
+import com.app.market.service.agent.AgentService;
 import com.app.market.service.common.CrudService;
 import com.app.market.service.user.AuthService;
-import com.app.market.service.user.UserService;
 import com.app.market.support.util.Version;
 
 import jodd.util.StringUtil;
 
 @Service(version = Version.NOW)
-public class UserServiceImpl implements UserService {
+public class AgentInfoServiceImpl implements AgentService {
 	@Autowired
 	private CrudService crudService;
 	@Autowired
-	private UserMapper userMapper;
-	@Autowired
 	private AuthService authService;
+	@Autowired
+	private AgentMapper agentMapper;
 	@Autowired
 	private SysUserMapper sysUserMapper;
 
 	@Override
-	public PageBean<Map<String, String>> getUserList(SysUserDTO p, PageDTO page) {
+	public PageBean<Map<String, String>> getInfoList(SysUserDTO p, PageDTO page) {
 		PageBean<Map<String, String>> ret = null;
-		String orgId = this.authService.getUserOrgId(p.getUserId());
+		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
 		p.setOrgId(orgId);
-		ret = this.crudService.getListPage(page, this.userMapper, "getUserList", p);
+		ret = this.crudService.getListPage(page, this.agentMapper, "getInfoList", p);
 		return ret;
 	}
 
 	@Override
-	public String saveUserData(SysUserDTO p) {
+	public String saveInfoData(SysUserDTO p) {
 		String ret = "-101";
-		String orgId = this.authService.getUserOrgId(p.getUserId());
-		p.setOrgId(orgId);
+		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
 		// 同一个机构,用户名不能相同
 		SysUserExample ex = new SysUserExample();
 		ex.createCriteria().andUserNameEqualTo(p.getUserName()).andOrgIdEqualTo(orgId);
@@ -56,17 +55,15 @@ public class UserServiceImpl implements UserService {
 			}
 		}
 		if (StringUtil.isBlank(p.getId())) {
+			p.setUserType("2");// 供应商
 			p.setCreateTime(new Date());
-			p.setCreateUser(p.getUserId());
+			p.setCreateUser(p.getUpdateUser());
+			p.setOrgId(orgId);
 		}
 		ret = this.crudService.saveData(this.sysUserMapper, p);
+		// 保存成功后,给角色赋予角色,与创建人一样的角色
+		this.agentMapper.saveInfoRole(p.getUpdateUser(), p.getId());
 		return ret;
-	}
-
-	@Override
-	public String removeUserData(SysUserDTO p) {
-		Integer cn = this.crudService.removeData(this.userMapper, "deleteUserData", p.getId());
-		return cn.toString();
 	}
 
 }

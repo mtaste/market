@@ -13,6 +13,15 @@ public class SysUserDTO extends SysUser implements Serializable {
 
 	private String userId;
 	private String keyword;
+	private String updateUser;
+
+	public String getUpdateUser() {
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
+	}
 
 	public String getKeyword() {
 		return keyword;
