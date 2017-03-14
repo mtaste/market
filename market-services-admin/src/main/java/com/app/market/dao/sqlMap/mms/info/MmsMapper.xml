@@ -13,11 +13,24 @@
 		a.end_time AS "endTime",
 		a.`status` AS "status",
 		b.`name` as "statusText",
-		a.points AS "points"
+		a.points AS "points",
+		c.user_name AS
+		"createUser",
+		DATE_FORMAT(
+		a.create_time,
+		"%Y-%m-%d %T"
+		) AS
+		"createTime"
 		FROM
-		mms_info a,
+		mms_info a LEFT JOIN
+		sys_user c ON a.create_user =
+		c.id,
 		v_status b
 		where a.`status`=b.val
+		<if test="param.updateUser!=null and param.updateUser != ''">
+			AND a.create_user =
+			#{param.updateUser,jdbcType=VARCHAR}
+		</if>
 		and
 		a.org_id=#{param.orgId,jdbcType=VARCHAR}
 		<if test="param.keyword!=null and param.keyword != ''">
@@ -38,15 +51,34 @@
 		a.title AS "title",
 		a.remark AS "remark",
 		b. NAME AS
-		"status"
+		"status",
+		getUserName (c.create_user) AS "createUser",
+		DATE_FORMAT(
+		c.create_time,
+		"%Y-%m-%d %T"
+		) AS "createTime"
 		FROM
-		mms_points_change a,
+		mms_points_change a
+		LEFT JOIN sys_approval_list c ON a.id = c.bill_id
+		AND c.`status` = '0',
 		v_status b
 		WHERE
-		a.`status` =
-		b.val
-		and
-		a.org_id=#{param.orgId,jdbcType=VARCHAR}
+		a.`status` = b.val
+		AND a.org_id
+		=#{param.orgId,jdbcType=VARCHAR}
+		AND EXISTS (
+		SELECT
+		1
+		FROM
+		sys_approval_list c
+		WHERE
+		a.id =
+		c.bill_id
+		AND c.bill_name =
+		'MmsPointsChangeDTO'
+		AND c.create_user =
+		#{param.updateUser,jdbcType=VARCHAR}
+		)
 		<if test="param.keyword!=null and param.keyword != ''">
 			and
 			CONCAT(a.title,remark) like
@@ -55,6 +87,8 @@
 		<if test="param.status!=null and param.status != ''">
 			and a.`status`=#{param.status,jdbcType=VARCHAR}
 		</if>
+		ORDER BY
+		c.create_time DESC
 	</select>
 
 
@@ -86,6 +120,10 @@
 		mms_info a
 		WHERE
 		a.org_id =#{param.orgId,jdbcType=VARCHAR}
+		<if test="param.updateUser!=null and param.updateUser != ''">
+			AND
+			a.create_user =#{param.updateUser,jdbcType=VARCHAR}
+		</if>
 		AND NOT EXISTS
 		(
 		SELECT
@@ -165,7 +203,28 @@
 		AND b.info_id =
 		mms_info.id
 		)
+		WHERE
+		EXISTS (
+		SELECT
+		1 FROM
+		mms_points_change_detail b
+		WHERE
+		b.bill_id =
+		#{param.id,jdbcType=VARCHAR}
+		AND b.info_id =
+		mms_info.id
+		);
 	</update>
 
-
+	<select id="getPointsByBillId" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		SELECT
+		ifnull(sum(a.points), 0)
+		FROM
+		mms_points_change_detail
+		a
+		WHERE
+		a.bill_id
+		=#{billId,jdbcType=VARCHAR}
+	</select>
 </mapper>

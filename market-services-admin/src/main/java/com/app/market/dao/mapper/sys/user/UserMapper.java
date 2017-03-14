@@ -48,4 +48,12 @@ public interface UserMapper {
 	 * @return
 	 */
 	Map<String, String> getUserInfo(@Param("id") String userId);
+
+	/**
+	 * 个人信息展示
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	Map<String, String> getInfo(@Param("id") String userId);
 }

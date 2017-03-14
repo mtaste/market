@@ -42,6 +42,7 @@ public class CrudServiceImpl implements CrudService {
 		if (StringUtils.isBlank(id)) {
 			// 增加权数据
 			ret = this.add(mapper, p);
+			this.addAuthList(p, ret, 0);
 		} else {
 			// 更新数据
 			ret = this.update(mapper, p);

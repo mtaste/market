@@ -22,4 +22,6 @@ public interface MmsMapper {
 	Integer savePointsChangeDetail(@Param("param") MmsPointsChangeDTO p);
 
 	Integer saveMemberPointsChange(@Param("param") MmsPointsChangeDTO p);
+
+	Integer getPointsByBillId(@Param("billId") String billId);
 }

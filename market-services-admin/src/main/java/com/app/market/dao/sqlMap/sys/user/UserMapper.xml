@@ -118,4 +118,23 @@
 		AND
 		a.id = #{id,jdbcType=VARCHAR}
 	</select>
+
+	<select id="getInfo" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.user_name AS "userName",
+		a.pass_word AS "passWord",
+		a.`name` AS "name",
+		a.mobile AS "mobile",
+		a.address AS "address",
+		b.`name` AS "status",
+		a.points AS "points"
+		FROM
+		sys_user a,
+		v_status b
+		WHERE
+		a.`status` = b.val
+		and a.id = #{id,jdbcType=VARCHAR}
+	</select>
+
 </mapper>

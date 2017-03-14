@@ -1,5 +1,6 @@
 package com.app.market.service.mms.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -9,10 +10,12 @@ import com.alibaba.dubbo.config.annotation.Service;
 import com.app.market.dao.entity.mms.mybatis.MmsPointsChange;
 import com.app.market.dao.entity.mms.mybatis.MmsPointsChangeDetail;
 import com.app.market.dao.entity.mms.mybatis.MmsPointsChangeDetailExample;
+import com.app.market.dao.entity.sys.mybatis.SysUser;
 import com.app.market.dao.mapper.mms.info.MmsMapper;
 import com.app.market.dao.mapper.mms.mybatis.MmsInfoMapper;
 import com.app.market.dao.mapper.mms.mybatis.MmsPointsChangeDetailMapper;
 import com.app.market.dao.mapper.mms.mybatis.MmsPointsChangeMapper;
+import com.app.market.dao.mapper.sys.mybatis.SysUserMapper;
 import com.app.market.dto.common.PageBean;
 import com.app.market.dto.common.PageDTO;
 import com.app.market.dto.mms.MmsInfoDTO;
@@ -39,12 +42,17 @@ public class MmsServiceImpl implements MmsService {
 	private MmsPointsChangeMapper mmsPointsChangeMapper;
 	@Autowired
 	private MmsMapper mmsMapper;
+	@Autowired
+	private SysUserMapper sysUserMapper;
 
 	@Override
 	public PageBean<Map<String, String>> getInfoList(MmsInfoDTO p, PageDTO page) {
 		PageBean<Map<String, String>> ret = null;
-		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
-		p.setOrgId(orgId);
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getUpdateUser());
+		p.setOrgId(user.getOrgId());
+		if ("1".equals(user.getUserType())) {
+			p.setUpdateUser(null);
+		}
 		ret = this.crudService.getListPage(page, this.mmsMapper, "getInfoList", p);
 		return ret;
 	}
@@ -55,6 +63,8 @@ public class MmsServiceImpl implements MmsService {
 		if (StringUtil.isBlank(p.getId())) {
 			String orgId = this.authService.getUserOrgId(p.getUpdateUser());
 			p.setOrgId(orgId);
+			p.setCreateTime(new Date());
+			p.setCreateUser(p.getUpdateUser());
 		}
 		ret = this.crudService.saveData(this.mmsInfoMapper, p);
 		return ret;
@@ -92,7 +102,19 @@ public class MmsServiceImpl implements MmsService {
 
 	@Override
 	public String appPointsChangeData(MmsPointsChangeDTO p) {
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getUpdateUser());
+		if ("2".equals(user.getUserType())) {
+			Integer billCountPoints = this.mmsMapper.getPointsByBillId(p.getId());
+			if (billCountPoints == null)
+				billCountPoints = 0;
+			if (user.getPoints() == null)
+				user.setPoints(0);
+			if (user.getPoints() < billCountPoints) {
+				return "-601";
+			}
+		}
 		Integer cn = this.crudService.appData(this.mmsPointsChangeMapper, p);
+		this.mmsMapper.saveMemberPointsChange(p);
 		return cn.toString();
 	}
 
@@ -121,8 +143,11 @@ public class MmsServiceImpl implements MmsService {
 	@Override
 	public PageBean<Map<String, String>> getPointsChangeMemberList(PageDTO page, MmsPointsChangeDTO p) {
 		PageBean<Map<String, String>> ret = null;
-		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
-		p.setOrgId(orgId);
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getUpdateUser());
+		p.setOrgId(user.getOrgId());
+		if ("1".equals(user.getUserType())) {
+			p.setUpdateUser(null);
+		}
 		ret = this.crudService.getListPage(page, this.mmsMapper, "getPointsChangeMemberList", p);
 		return ret;
 	}

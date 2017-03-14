@@ -23,4 +23,8 @@ public interface AgentMapper {
 	Integer savePointsChangeDetail(@Param("param") AgentPointsChangeDTO p);
 
 	List<Map<String, String>> getPointChangeList(@Param("param") AgentPointsChangeDTO p);
+
+	Integer addAgentPointsByBill(@Param("param") AgentPointsChangeDTO p);
+
+	Integer getPointsByBillId(@Param("billId") String billId);
 }

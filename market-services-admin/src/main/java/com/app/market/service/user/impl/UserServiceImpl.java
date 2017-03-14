@@ -69,4 +69,36 @@ public class UserServiceImpl implements UserService {
 		return cn.toString();
 	}
 
+	@Override
+	public Map<String, String> getInfo(String userId) {
+		return this.userMapper.getInfo(userId);
+	}
+
+	@Override
+	public String changeInfo(SysUserDTO p) {
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getId());
+		if (user == null) {
+			return "-101";
+		}
+		user.setAddress(p.getAddress());
+		user.setMobile(p.getMobile());
+		user.setName(p.getName());
+		Integer cn = this.sysUserMapper.updateByPrimaryKey(user);
+		return cn.toString();
+	}
+
+	@Override
+	public String changePassWord(SysUserDTO p) {
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getId());
+		if (user == null) {
+			return "-101";
+		}
+		if (!p.getPassWord().equals(user.getPassWord())) {
+			return "-202";
+		}
+		user.setPassWord(p.getNewPassWord());
+		Integer cn = this.sysUserMapper.updateByPrimaryKey(user);
+		return cn.toString();
+	}
+
 }

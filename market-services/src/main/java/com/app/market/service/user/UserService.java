@@ -32,4 +32,28 @@ public interface UserService {
 	 */
 	String removeUserData(SysUserDTO p);
 
+	/**
+	 * 获取用户信息数据
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	Map<String, String> getInfo(String userId);
+
+	/**
+	 * 修改个人信息
+	 * 
+	 * @param p
+	 * @return
+	 */
+	String changeInfo(SysUserDTO p);
+
+	/**
+	 * 修改个人密码
+	 * 
+	 * @param p
+	 * @return
+	 */
+	String changePassWord(SysUserDTO p);
+
 }

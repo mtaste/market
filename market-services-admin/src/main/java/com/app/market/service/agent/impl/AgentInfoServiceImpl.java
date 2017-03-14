@@ -46,8 +46,11 @@ public class AgentInfoServiceImpl implements AgentService {
 	@Override
 	public PageBean<Map<String, String>> getInfoList(SysUserDTO p, PageDTO page) {
 		PageBean<Map<String, String>> ret = null;
-		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
-		p.setOrgId(orgId);
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getUpdateUser());
+		p.setOrgId(user.getOrgId());
+		if ("1".equals(user.getUserType())) {
+			p.setUpdateUser(null);
+		}
 		ret = this.crudService.getListPage(page, this.agentMapper, "getInfoList", p);
 		return ret;
 	}
@@ -81,8 +84,8 @@ public class AgentInfoServiceImpl implements AgentService {
 	@Override
 	public PageBean<Map<String, String>> getPointsChangeList(PageDTO page, AgentPointsChangeDTO p) {
 		PageBean<Map<String, String>> ret = null;
-		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
-		p.setOrgId(orgId);
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getUpdateUser());
+		p.setOrgId(user.getOrgId());
 		ret = this.crudService.getListPage(page, this.agentMapper, "getPointChangeList", p);
 		return ret;
 	}
@@ -125,8 +128,23 @@ public class AgentInfoServiceImpl implements AgentService {
 
 	@Override
 	public String appPointsChangeData(AgentPointsChangeDTO p) {
+		// 判断提交的代理积分是否足够
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getUpdateUser());
+		if ("2".equals(user.getUserType())) {
+			Integer billCountPoints = this.agentMapper.getPointsByBillId(p.getId());
+			if (billCountPoints == null)
+				billCountPoints = 0;
+			if (user.getPoints() == null)
+				user.setPoints(0);
+			if (user.getPoints() < billCountPoints) {
+				return "-601";
+			}
+			// 扣除积分
+			user.setPoints(user.getPoints() - billCountPoints);
+			this.sysUserMapper.updateByPrimaryKey(user);
+		}
 		Integer cn = this.crudService.appData(this.agentPointsChangeMapper, p);
-		// TODO
+		this.agentMapper.addAgentPointsByBill(p);
 		return cn.toString();
 	}
 
@@ -140,8 +158,11 @@ public class AgentInfoServiceImpl implements AgentService {
 	@Override
 	public PageBean<Map<String, String>> getPointsChangeMemberList(PageDTO page, AgentPointsChangeDTO p) {
 		PageBean<Map<String, String>> ret = null;
-		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
-		p.setOrgId(orgId);
+		SysUser user = this.sysUserMapper.selectByPrimaryKey(p.getUpdateUser());
+		p.setOrgId(user.getOrgId());
+		if ("1".equals(user.getUserType())) {
+			p.setUpdateUser(null);
+		}
 		this.agentMapper.getPointsChangeMemberList(p);
 		ret = this.crudService.getListPage(page, this.agentMapper, "getPointsChangeMemberList", p);
 		return ret;

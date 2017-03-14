@@ -7,31 +7,39 @@
 		SELECT
 		a.id AS "id",
 		a.user_name AS "userName",
-		a.`name` AS
-		"name",
+		a.`name` AS "name",
 		a.mobile AS "mobile",
 		a.address AS "address",
-		a.points AS
-		"points",
+		a.points AS "points",
 		a.`status` AS "status",
-		b.`name` AS "statusText"
+		b.`name` AS "statusText",
+		c.user_name AS
+		"createUser",
+		DATE_FORMAT(
+		a.create_time,
+		"%Y-%m-%d %T"
+		) AS "createTime"
 		FROM
-		sys_user
-		a,
-		v_status
-		b
+		sys_user a
+		LEFT JOIN
+		sys_user c ON a.create_user = c.id,
+		v_status b
 		WHERE
 		a.`status` = b.val
 		AND a.user_type = '2'
 		AND a.org_id =
 		#{param.orgId,jdbcType=VARCHAR}
-		AND a.create_user =
-		#{param.updateUser,jdbcType=VARCHAR}
+		<if test="param.updateUser!=null and param.updateUser != ''">
+			AND a.create_user =
+			#{param.updateUser,jdbcType=VARCHAR}
+		</if>
 		<if test="param.keyword!=null and param.keyword != ''">
 			and
 			CONCAT(a.name,a.address,a.user_name,a.mobile) like
 			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
 		</if>
+		ORDER BY
+		a.create_time DESC
 	</select>
 
 	<update id="saveInfoRole" parameterType="java.lang.String">
@@ -51,4 +59,205 @@
 		a.user_id
 		=#{updateUser,jdbcType=VARCHAR};
 	</update>
+
+	<select id="getPointsChangeDetail" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		b.id AS "id",
+		b.`name` AS "name",
+		b.user_name AS
+		"userName",
+		a.points AS "points"
+		FROM
+		agent_points_change_detail a,
+		sys_user b
+		WHERE
+		a.user_id = b.id
+		AND a.bill_id =
+		#{param.id,jdbcType=VARCHAR}
+	</select>
+
+	<select id="getPointsChangeMemberList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.`name` AS "name",
+		a.user_name AS "userName"
+		FROM
+		sys_user a
+		WHERE
+		a.org_id =#{param.orgId,jdbcType=VARCHAR}
+		<if test="param.updateUser!=null and param.updateUser != ''">
+			AND
+			a.create_user =#{param.updateUser,jdbcType=VARCHAR}
+		</if>
+		AND a.user_type='2'
+		AND NOT
+		EXISTS (
+		SELECT
+		1
+		FROM
+		agent_points_change_detail b
+		WHERE
+		a.id =
+		b.user_id
+		AND
+		b.bill_id =
+		#{param.id,jdbcType=VARCHAR}
+		)
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.user_name,name) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+	</select>
+
+	<update id="removePointsChangeDetail" parameterType="java.lang.String">
+		DELETE
+		FROM
+		agent_points_change_detail
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		sys_user a
+		WHERE
+		CONCAT(',', #{param.selectIds,jdbcType=VARCHAR}, ',') LIKE
+		CONCAT('%,', a.id,
+		',%')
+		AND agent_points_change_detail.user_id = a.id
+		AND
+		agent_points_change_detail.bill_id =#{param.id,jdbcType=VARCHAR})
+	</update>
+
+	<update id="savePointsChangeDetail" parameterType="java.lang.String">
+		INSERT INTO
+		agent_points_change_detail (id, bill_id, user_id, points) SELECT
+		UUID(),
+		#{param.id,jdbcType=VARCHAR},
+		a.id,
+		0
+		FROM
+		sys_user a
+		WHERE
+		CONCAT(
+		',',
+		#{param.selectIds,jdbcType=VARCHAR}, ',') LIKE
+		CONCAT('%,', a.id,
+		',%')
+		AND NOT EXISTS (
+		SELECT
+		1
+		FROM
+		agent_points_change_detail b
+		WHERE
+		a.id
+		= b.user_id
+		AND b.bill_id = #{param.id,jdbcType=VARCHAR}
+		)
+		AND a.org_id =
+		#{param.orgId,jdbcType=VARCHAR}
+	</update>
+
+	<select id="getPointChangeList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.title AS "title",
+		a.remark AS "remark",
+		b. NAME AS
+		"status",
+		getUserName (c.create_user) AS "createUser",
+		DATE_FORMAT(
+		c.create_time,
+		"%Y-%m-%d %T"
+		) AS "createTime"
+		FROM
+		agent_points_change a
+		LEFT JOIN sys_approval_list c ON a.id = c.bill_id
+		AND c.`status` = '0',
+		v_status b
+		WHERE
+		a.`status` = b.val
+		AND a.org_id
+		=#{param.orgId,jdbcType=VARCHAR}
+		AND EXISTS (
+		SELECT
+		1
+		FROM
+		sys_approval_list c
+		WHERE
+		a.id =
+		c.bill_id
+		AND c.bill_name =
+		'AgentPointsChangeDTO'
+		AND c.create_user =
+		#{param.updateUser,jdbcType=VARCHAR}
+		)
+		<if test="param.keyword!=null and param.keyword != ''">
+			and
+			CONCAT(a.title,remark) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+		<if test="param.status!=null and param.status != ''">
+			and a.`status`=#{param.status,jdbcType=VARCHAR}
+		</if>
+		ORDER BY
+		c.create_time DESC
+
+	</select>
+
+	<update id="addAgentPointsByBill" parameterType="java.lang.String">
+		UPDATE
+		sys_user
+		SET points = IFNULL(points, 0) + (
+		SELECT
+		points
+		FROM
+		agent_points_change_detail b
+		WHERE
+		b.bill_id
+		=#{param.id,jdbcType=VARCHAR}
+		AND b.user_id =
+		sys_user.id
+		)
+		WHERE
+		EXISTS (
+		SELECT
+		1
+		FROM
+		agent_points_change_detail b
+		WHERE
+		b.bill_id =
+		#{param.id,jdbcType=VARCHAR}
+		AND b.user_id = sys_user.id
+		);
+
+		UPDATE
+		sys_user
+		SET points = IFNULL(points, 0) - (
+		SELECT
+		sum(ifnull(points, 0))
+		FROM
+		agent_points_change_detail b
+		WHERE
+		b.bill_id
+		=#{param.id,jdbcType=VARCHAR}
+		)
+		WHERE id =
+		#{param.updateUser,jdbcType=VARCHAR};
+	</update>
+
+	<select id="getPointsByBillId" parameterType="java.lang.String"
+		resultType="java.lang.Integer">
+		SELECT
+		ifnull(sum(a.points), 0)
+		FROM
+		agent_points_change_detail a
+		WHERE
+		a.bill_id
+		=#{billId,jdbcType=VARCHAR}
+	</select>
+
 </mapper>
