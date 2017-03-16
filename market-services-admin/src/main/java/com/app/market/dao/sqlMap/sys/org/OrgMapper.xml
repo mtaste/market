@@ -237,25 +237,7 @@
 	</select>
 	<!-- 保存职务权限信息 -->
 	<update id="saveRoleAuth" parameterType="java.lang.String">
-		DELETE
-		FROM
-		sys_role_auth
-		WHERE
-		role_id = #{roleId,jdbcType=VARCHAR};
-		INSERT INTO sys_role_auth
-		(id, role_id, auth_id) SELECT
-		UUID(),
-		#{roleId,jdbcType=VARCHAR},
-		a.id
-		FROM
-		sys_auth a
-		WHERE
-		CONCAT(
-		',',
-		#{authIds,jdbcType=VARCHAR},
-		','
-		) LIKE
-		CONCAT('%,', a.id, ',%');
+		select saveRoleAuth( #{roleId,jdbcType=VARCHAR},#{authIds,jdbcType=VARCHAR})
 	</update>
 	<!-- 获取职务可选择用户 -->
 	<select id="getRoleUserSelect" parameterType="java.lang.String"

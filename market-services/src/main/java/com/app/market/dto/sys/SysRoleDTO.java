@@ -14,6 +14,15 @@ public class SysRoleDTO extends SysRole implements Serializable {
 	private String authIds;
 	private String userId;
 	private String roleId;
+	private String updateUser;
+
+	public String getUpdateUser() {
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
+	}
 
 	public String getRoleId() {
 		return roleId;

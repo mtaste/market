@@ -11,4 +11,14 @@ public class SysAuthDTO extends SysAuth implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private String updateUser;
+
+	public String getUpdateUser() {
+		return updateUser;
+	}
+
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
+	}
+
 }

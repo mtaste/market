@@ -1,0 +1,10 @@
+# See http://help.github.com/ignore-files/ for more about ignoring files.
+
+# compiled output
+/logs
+/market-core/target
+/market-services/target
+/market-services-admin/target
+#System Files
+.DS_Store
+Thumbs.db

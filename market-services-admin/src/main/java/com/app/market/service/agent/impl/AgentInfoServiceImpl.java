@@ -68,15 +68,19 @@ public class AgentInfoServiceImpl implements AgentService {
 				return "-203";
 			}
 		}
+		boolean isNew = false;
 		if (StringUtil.isBlank(p.getId())) {
 			p.setUserType("2");// 供应商
 			p.setCreateTime(new Date());
 			p.setCreateUser(p.getUpdateUser());
 			p.setOrgId(orgId);
+			isNew = true;
 		}
 		ret = this.crudService.saveData(this.sysUserMapper, p);
 		// 保存成功后,给角色赋予角色,与创建人一样的角色
-		this.agentMapper.saveInfoRole(p.getUpdateUser(), p.getId());
+		if (isNew == true) {
+			this.agentMapper.saveInfoRole(p.getUpdateUser(), p.getId());
+		}
 		return ret;
 	}
 
