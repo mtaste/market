@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.market.dao.mapper.report.mms.ReportAgentMapper">
+	<!-- 获取列表 -->
+	<select id="getInfo" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		c.user_name AS "userName",
+		DATE_FORMAT(d.create_time, '%Y-%m-%d')
+		AS "mothDay",
+		sum(b.points) AS "points"
+		FROM
+		agent_points_change a,
+		agent_points_change_detail b,
+		sys_user c,
+		sys_approval_list d
+		WHERE
+		a.id =
+		b.bill_id
+		AND b.user_id = c.id
+		AND a.`status` >= 1
+		AND a.id = d.bill_id
+		AND d.`status` = '1'
+		AND a.org_id=#{param.orgId,jdbcType=VARCHAR}
+		<if test="param.updateUser!=null and param.updateUser != ''">
+			<![CDATA[ AND d.create_user = #{param.updateUser,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="param.userName!=null and param.userName != ''">
+			<![CDATA[ AND c.user_name = #{param.userName,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="param.beginTime!=null and param.beginTime != ''">
+			<![CDATA[ AND d.create_time>=#{param.beginTime,jdbcType=VARCHAR}]]>
+		</if>
+		<if test="param.endTime!=null and param.endTime!= ''">
+			<![CDATA[ AND d.create_time<=#{param.endTime,jdbcType=VARCHAR}]]>
+		</if>
+		GROUP BY
+		c.user_name,
+		DATE_FORMAT(d.create_time, '%Y-%m-%d')
+	</select>
+
+</mapper>
