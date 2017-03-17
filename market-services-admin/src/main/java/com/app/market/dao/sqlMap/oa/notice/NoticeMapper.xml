@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.market.dao.mapper.oa.notice.NoticeMapper">
+	<!-- 获取列表 -->
+	<select id="getNoticeList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.title AS "title",
+		a.content AS "content",
+		b.`name` AS "status",
+		getUserName (c.create_user) AS "createUser",
+		DATE_FORMAT(
+		c.create_time,
+		"%Y-%m-%d %T"
+		) AS "createTime"
+		FROM
+		oa_notice a
+		LEFT JOIN sys_approval_list c ON a.id = c.bill_id
+		AND c.`status` = '0',
+		v_status b
+		WHERE
+		a.`status` = b.val
+		AND a.org_id = #{param.orgId,jdbcType=VARCHAR}
+	</select>
+
+	<update id="deleteNoticeData" parameterType="java.lang.String">
+		DELETE
+		FROM
+		oa_notice
+		WHERE
+		STATUS = 0
+		AND id =#{id,jdbcType=VARCHAR}
+	</update>
+</mapper>
