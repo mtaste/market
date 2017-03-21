@@ -78,7 +78,7 @@
 		a.org_id =
 		b.id
 		and CONCAT(b.flag,
-		'_',
+		'-',
 		a.user_name)=#{userName,jdbcType=VARCHAR}
 	</select>
 

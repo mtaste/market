@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.app.market.dao.mapper.oa.attendance.AttendanceMapper">
+	<!-- 获取列表 -->
+	<select id="getUserTodayInfo" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.begin_time AS "beginTime",
+		a.end_time
+		AS "endTime"
+		FROM
+		oa_attendance a
+		WHERE
+		a.org_id
+		=#{param.orgId,jdbcType=VARCHAR}
+		AND a.user_id =
+		#{param.userId,jdbcType=VARCHAR}
+		AND DATE_FORMAT(a.begin_time,
+		"%Y-%m-%d") = DATE_FORMAT(SYSDATE(),
+		"%Y-%m-%d")
+	</select>
+
+	<select id="getAttendanceList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		DATE_FORMAT(a.begin_time, "%Y-%m-%d") AS "dayDate",
+		DATE_FORMAT(a.begin_time, "%T") AS "beginTime",
+		DATE_FORMAT(a.end_time, "%T") AS "endTime"
+		FROM
+		oa_attendance a
+
+		WHERE
+		a.org_id
+		=#{param.orgId,jdbcType=VARCHAR}
+		AND a.user_id =
+		#{param.userId,jdbcType=VARCHAR}
+		<if test="param.keyword!=null and param.keyword != ''">
+			and DATE_FORMAT(a.begin_time, "%Y-%m-%d") like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+		order by a.begin_time desc
+	</select>
+
+</mapper>
