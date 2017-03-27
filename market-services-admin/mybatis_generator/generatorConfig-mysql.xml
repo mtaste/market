@@ -10,16 +10,14 @@
 		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
 			connectionURL="jdbc:mysql://120.24.73.245:3306/test?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"
 			userId="jst" password="=Jst1234" />
-		<javaModelGenerator targetPackage="com.app.market.dao.entity.oa.mybatis"
+		<javaModelGenerator targetPackage="com.app.market.dao.entity.asset.mybatis"
 			targetProject="../../market-services/src/main/java" />
-		<sqlMapGenerator targetPackage="com.app.market.dao.sqlMap.oa.mybatis"
+		<sqlMapGenerator targetPackage="com.app.market.dao.sqlMap.asset.mybatis"
 			targetProject="../src/main/java" />
-		<javaClientGenerator targetPackage="com.app.market.dao.mapper.oa.mybatis"
+		<javaClientGenerator targetPackage="com.app.market.dao.mapper.asset.mybatis"
 			targetProject="../src/main/java" type="XMLMAPPER" />
 
-		<table tableName="oa_attendance" domainObjectName="OaAttendance">
-			<columnOverride column="begin_time" jdbcType="TIMESTAMP" />
-			<columnOverride column="end_time" jdbcType="TIMESTAMP" />
+		<table tableName="asset_register" domainObjectName="AssetRegister">
 		</table>
 		<!-- <table tableName="sys_time_list" domainObjectName="MgOrgAuth"> <columnOverride 
 			column="CREATE_TIME" jdbcType="TIMESTAMP" /> <columnOverride column="UPDATE_TIME" 

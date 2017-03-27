@@ -1,35 +1,39 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.app.market.dao.mapper.oa.notice.NoticeMapper">
+<mapper namespace="com.app.market.dao.mapper.asset.service.AssetMapper">
 	<!-- 获取列表 -->
-	<select id="getNoticeList" parameterType="java.lang.String"
+	<select id="getCheckInList" parameterType="java.lang.String"
 		resultType="java.util.HashMap">
 		SELECT
 		a.id AS "id",
-		a.title AS "title",
-		a.content AS "content",
-		b.`name`
-		AS "status",
-		getUserName (c.create_user) AS "createUser",
+		a.asset_num AS "assetNum",
+		a.`name` AS "name",
+		a.remark AS "remark",
+		a.qty AS "qty",
+		b.`name` AS "status",
+		getUserName
+		(c.create_user) AS "createUser",
 		DATE_FORMAT(
 		c.create_time,
-		"%Y-%m-%d %T"
+		"%Y-%m-%d
+		%T"
 		) AS "createTime"
 		FROM
-		oa_notice a
-		LEFT JOIN
-		sys_approval_list c ON a.id = c.bill_id
+		asset_register a
+		LEFT JOIN sys_approval_list c
+		ON a.id = c.bill_id
 		AND c.`status` = '0',
 		v_status b
 		WHERE
-		a.`status` = b.val
+		a.`status` =
+		b.val
 		AND a.`status`='0'
 		<if test="param.status!=null and param.status != ''">
 			AND a.`status` =#{param.status,jdbcType=VARCHAR}
 		</if>
 		<if test="param.keyword!=null and param.keyword != ''">
 			AND
-			CONCAT(a.title,a.content) like
+			CONCAT(a.asset_num,a.name,a.remark) like
 			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
 		</if>
 		AND c.create_user=#{param.updateUser,jdbcType=VARCHAR}
@@ -38,31 +42,35 @@
 
 		SELECT
 		a.id AS "id",
-		a.title AS "title",
-		a.content AS "content",
-		b.`name`
-		AS
-		"status",
-		getUserName (c.create_user) AS "createUser",
+		a.asset_num AS "assetNum",
+		a.`name` AS "name",
+		a.remark AS
+		"remark",
+		a.qty AS "qty",
+		b.`name` AS "status",
+		getUserName
+		(c.create_user) AS "createUser",
 		DATE_FORMAT(
 		c.create_time,
-		"%Y-%m-%d %T"
+		"%Y-%m-%d
+		%T"
 		) AS "createTime"
 		FROM
-		oa_notice a
-		LEFT JOIN
-		sys_approval_list c ON a.id = c.bill_id
+		asset_register a
+		LEFT JOIN sys_approval_list c
+		ON a.id = c.bill_id
 		AND c.`status` = '0',
 		v_status b
 		WHERE
-		a.`status` = b.val
+		a.`status` =
+		b.val
 		AND a.`status`!='0'
 		<if test="param.status!=null and param.status != ''">
 			AND a.`status` =#{param.status,jdbcType=VARCHAR}
 		</if>
 		<if test="param.keyword!=null and param.keyword != ''">
 			AND
-			CONCAT(a.title,a.content) like
+			CONCAT(a.asset_num,a.name,a.remark) like
 			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
 		</if>
 		AND a.org_id = #{param.orgId,jdbcType=VARCHAR}
@@ -71,10 +79,10 @@
 		desc
 	</select>
 
-	<update id="deleteNoticeData" parameterType="java.lang.String">
+	<update id="deleteCheckInData" parameterType="java.lang.String">
 		DELETE
 		FROM
-		oa_notice
+		asset_register
 		WHERE
 		STATUS = 0
 		AND id =#{id,jdbcType=VARCHAR}
