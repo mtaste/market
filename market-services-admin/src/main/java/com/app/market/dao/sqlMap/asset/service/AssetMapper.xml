@@ -87,4 +87,86 @@
 		STATUS = 0
 		AND id =#{id,jdbcType=VARCHAR}
 	</update>
+
+
+	<select id="getAssetList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		a.id AS "id",
+		a.asset_num AS "assetNum",
+		a.`name` AS "name",
+		a.remark AS
+		"remark",
+		a.qty AS "qty",
+		a.loan_qty AS "loanQty"
+		FROM
+		asset_register a,
+		v_status b
+		WHERE
+		a.`status` =
+		b.val
+		AND a.`status`!='0'
+		<if test="param.status!=null and param.status != ''">
+			AND a.`status` =#{param.status,jdbcType=VARCHAR}
+		</if>
+		<if test="param.keyword!=null and param.keyword != ''">
+			AND
+			CONCAT(a.asset_num,a.name,a.remark) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+		AND a.org_id = #{param.orgId,jdbcType=VARCHAR}
+		ORDER BY asset_num
+		desc
+	</select>
+
+	<select id="getAssetUserChooseList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT A.ID AS "id", A.USER_NAME AS "userName", A.NAME AS
+		"name"
+		FROM
+		sys_user A
+		WHERE A.ORG_ID = #{param.orgId,jdbcType=VARCHAR}
+		<if test="param.keyword!=null and param.keyword != ''">
+			AND
+			CONCAT(a.USER_NAME,a.NAME) like
+			CONCAT('%',#{param.keyword,jdbcType=VARCHAR},'%')
+		</if>
+	</select>
+
+	<select id="getAssetDetailList" parameterType="java.lang.String"
+		resultType="java.util.HashMap">
+		SELECT
+		c.user_name AS "userName",
+		c.`name` AS "name",
+		b.qty AS
+		"qty",
+		DATE_FORMAT(
+		d.create_time,
+		"%Y-%m-%d
+		%T"
+		) AS "createTime",
+		e.user_name AS "createUser",
+		DATE_FORMAT(
+		d.update_time,
+		"%Y-%m-%d
+		%T"
+		) AS
+		"updateTime"
+		FROM
+		asset_register a,
+		asset_manage b
+		LEFT JOIN sys_time_list
+		d ON b.id = d.bill_id,
+		sys_user c,
+		sys_user e
+		WHERE
+		a.id = b.asset_id
+		AND
+		b.user_id = c.id
+		AND d.create_user = e.id
+		AND a.ORG_ID =
+		#{param.orgId,jdbcType=VARCHAR}
+		AND a.id=#{param.id,jdbcType=VARCHAR}
+	</select>
+
 </mapper>

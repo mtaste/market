@@ -44,6 +44,7 @@ public class AssetCheckInServiceImpl implements AssetCheckInService {
 			String orgId = this.authService.getUserOrgId(p.getUpdateUser());
 			p.setOrgId(orgId);
 			p.setStatus("0");
+			p.setLoanQty(0);
 		}
 		ret = this.crudService.saveData(this.assetRegisterMapper, p);
 		return ret;
