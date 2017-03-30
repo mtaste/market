@@ -27,4 +27,8 @@ public interface AssetManageService {
 
 	PageBean<Map<String, String>> getAssetDetailList(AssetRegisterDTO p, PageDTO page);
 
+	PageBean<Map<String, String>> getAssetRevertDetailList(AssetRegisterDTO p, PageDTO page);
+
+	String assetRevert(AssetManageDTO p);
+
 }

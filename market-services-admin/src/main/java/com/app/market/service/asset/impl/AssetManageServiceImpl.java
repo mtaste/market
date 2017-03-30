@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.app.market.dao.entity.asset.mybatis.AssetManage;
 import com.app.market.dao.entity.asset.mybatis.AssetRegister;
 import com.app.market.dao.mapper.asset.mybatis.AssetManageMapper;
 import com.app.market.dao.mapper.asset.mybatis.AssetRegisterMapper;
@@ -99,8 +100,36 @@ public class AssetManageServiceImpl implements AssetManageService {
 		PageBean<Map<String, String>> ret = null;
 		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
 		p.setOrgId(orgId);
-		this.assetMapper.getAssetDetailList(p);
 		ret = this.crudService.getListPage(page, this.assetMapper, "getAssetDetailList", p);
+		return ret;
+	}
+
+	@Override
+	public PageBean<Map<String, String>> getAssetRevertDetailList(AssetRegisterDTO p, PageDTO page) {
+		PageBean<Map<String, String>> ret = null;
+		String orgId = this.authService.getUserOrgId(p.getUpdateUser());
+		p.setOrgId(orgId);
+		p.setStatus("0");
+		ret = this.crudService.getListPage(page, this.assetMapper, "getAssetDetailList", p);
+		return ret;
+	}
+
+	@Override
+	public String assetRevert(AssetManageDTO p) {
+		AssetRegister re = this.assetRegisterMapper.selectByPrimaryKey(p.getAssetId());
+		if (re == null) {
+			return "-101";
+		}
+		// 归还借出的资产
+		AssetManage a = this.assetManageMapper.selectByPrimaryKey(p.getId());
+		if (a == null) {
+			return "-101";
+		}
+		a.setStatus("1");
+		String ret = this.crudService.saveData(this.assetManageMapper, a);
+		// 归还后，总数据
+		re.setLoanQty(re.getLoanQty() - a.getQty());
+		this.assetRegisterMapper.updateByPrimaryKey(re);
 		return ret;
 	}
 

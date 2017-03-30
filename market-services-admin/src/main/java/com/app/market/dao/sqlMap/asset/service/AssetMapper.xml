@@ -136,16 +136,19 @@
 	<select id="getAssetDetailList" parameterType="java.lang.String"
 		resultType="java.util.HashMap">
 		SELECT
+		b.id AS "id",
 		c.user_name AS "userName",
 		c.`name` AS "name",
-		b.qty AS
+		b.qty
+		AS
 		"qty",
 		DATE_FORMAT(
 		d.create_time,
 		"%Y-%m-%d
 		%T"
 		) AS "createTime",
-		e.user_name AS "createUser",
+		e.user_name AS
+		"createUser",
 		DATE_FORMAT(
 		d.update_time,
 		"%Y-%m-%d
@@ -156,17 +159,22 @@
 		asset_register a,
 		asset_manage b
 		LEFT JOIN sys_time_list
-		d ON b.id = d.bill_id,
+		d ON b.id =
+		d.bill_id,
 		sys_user c,
 		sys_user e
 		WHERE
 		a.id = b.asset_id
 		AND
-		b.user_id = c.id
+		b.user_id =
+		c.id
 		AND d.create_user = e.id
 		AND a.ORG_ID =
 		#{param.orgId,jdbcType=VARCHAR}
 		AND a.id=#{param.id,jdbcType=VARCHAR}
+		<if test="param.status!=null and param.status != ''">
+			AND b.status=#{param.status,jdbcType=VARCHAR}
+		</if>
 	</select>
 
 </mapper>
